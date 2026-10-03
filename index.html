@@ -752,12 +752,12 @@ function simG(a,from){
 }
 async function plan(){const t=T[L],o=$("opts");let k=0;$("ivnote").textContent="";$("qq").textContent=t.pl[0];o.innerHTML=`<div class="lead">${esc(qText)}</div>`;
   const tm=setInterval(()=>{k=Math.min(t.pl.length-1,k+1);if(step===0)$("qq").textContent=t.pl[k]},4500);
-  const fail=()=>{$("qq").textContent=t.plfail;o.innerHTML="";const a=document.createElement("button");a.className="pill solid go";a.textContent=t.plre;a.onclick=()=>ask();o.appendChild(a);const b=document.createElement("button");b.className="pill";b.style.marginTop="4px";b.textContent=t.plex;b.onclick=()=>{setG(null);step=1;ask()};o.appendChild(b)};
+  const fail=m=>{$("qq").textContent=m||t.plfail;o.innerHTML="";const a=document.createElement("button");a.className="pill solid go";a.textContent=t.plre;a.onclick=()=>ask();o.appendChild(a);const b=document.createElement("button");b.className="pill";b.style.marginTop="4px";b.textContent=t.plex;b.onclick=()=>{setG(null);step=1;ask()};o.appendChild(b)};
   let r;try{r=await aiCall({kind:"plan",q:qText})}catch(e){clearInterval(tm);if(step===0)fail();return}
   clearInterval(tm);if(step!==0)return;
   const go=()=>{const b=document.createElement("button");b.className="pill solid go";b.style.marginTop="14px";b.textContent=T[L].plgo;b.onclick=()=>{step=1;burst(7);ask()};o.appendChild(b)};
   if(r.startup){setG(null);$("qq").textContent=t.plh;o.innerHTML=`<div class="find">${t.plstart}</div>`;go();return}
-  if(!r.ok||!r.spec){fail();return}
+  if(!r.ok||!r.spec){fail(r.why==="unsupported"?(L==="ko"?"이 고민은 해보다가 돌아설 수 있는 길이 아니어서, 지금 방식으로는 다루지 않습니다. 일, 공부, 이주처럼 도중에 방향을 바꿀 수 있는 고민을 적어주세요.":"This one cannot be stopped or undone once chosen, so this method does not cover it. Try a decision you could turn back from, such as work, study or a move."):null);return}
   setG(r.spec);paint_src();$("qq").textContent=T[L].plh;{const n=T[L].Q.length;$("pn").textContent="01 / "+String(n+1).padStart(2,"0");$("pb").style.width=(100/(n+1))+"%"}
   o.innerHTML=G.facts.map(f=>`<div class="find">${esc(f.t)} <em class="aitag" style="display:inline;margin-left:6px">${f.s>=0&&G.sources[f.s]?T[L].plsrc+": "+esc(G.sources[f.s].title):T[L].plasm}</em></div>`).join("");go()}
 function paint_src(){const t=T[L];$("src").innerHTML=t.src.map(s=>`<div class="find"><b>${esc(s[0])}</b><br>${esc(s[1])} ${s[2]?`<a href="${esc(s[2])}" target="_blank" rel="noopener">↗</a>`:""}</div>`).join("")+`<div class="find">${t.srcnote}</div>`;document.querySelectorAll("[data-t]").forEach(e=>{const v=t[e.dataset.t];if(typeof v==="string")e.innerHTML=v})}
