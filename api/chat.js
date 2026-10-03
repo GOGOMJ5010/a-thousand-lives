@@ -38,7 +38,7 @@ async function tavily(query) {
       body: JSON.stringify({ query: clip(query, 300), max_results: 5, search_depth: "advanced", exclude_domains: ["namu.wiki", "reddit.com", "quora.com", "dcinside.com", "fmkorea.com", "blog.naver.com", "cafe.naver.com", "youtube.com", "tistory.com", "workingus.com", "gohackers.com", "theqoo.net", "clien.net", "instagram.com", "facebook.com", "threads.net", "x.com", "tiktok.com", "ohou.se", "pinterest.com"] }) });
     if (!r.ok) return [];
     const d = await r.json();
-    return (d.results || []).map(x => ({ title: clip(x.title, 120), url: clip(x.url, 400), content: clip(x.content, 900) }));
+    return (d.results || []).map(x => ({ title: clip(String(x.title || "").split(/ [<|] | - /)[0], 90), url: clip(x.url, 400), content: clip(x.content, 900) }));
   } catch (e) { return []; }
 }
 
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
       if (!lives.length) return res.status(400).json({ error: "no lives" });
       const out = await complete([
         { role: "system", content: base + `\nSeveral versions of this person, each of whom lived a different one of the 1,000 lives, are asked the same question. Each answers from their own facts, so people with different outcomes should often disagree.
-Return ONLY JSON: {"options":[2 or 3 short answer labels, at most 3 words each, only labels that at least one life actually chooses],"answers":[{"n":life number,"option":index into options,"say":"one first-person sentence, specific to that life"}],"takeaway":"one sentence on what separates the groups"}
+Return ONLY JSON: {"options":[2 or 3 short answer labels, at most 3 words each, only labels that at least one life actually chooses],"answers":[{"n":life number,"option":index into options,"say":"one first-person sentence that names a concrete year or number from that life's record"}],"takeaway":"one sentence on what separates the groups"}
 Include every life exactly once in answers.` },
         { role: "user", content: `Outcome counts across all lives [success, landed safely, past loss limit]: ${clip(JSON.stringify(b.counts), 60)}\nThe lives answering:\n${clip(JSON.stringify(lives), 14000)}\n\nQuestion to all of them: ${q}` },
       ], { json: true, max: 3500 });
