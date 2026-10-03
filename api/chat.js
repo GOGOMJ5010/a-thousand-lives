@@ -102,7 +102,7 @@ Return ONLY JSON with this shape:
 Rules:
 - type "startup" only when the decision is about leaving a job to start a business or go freelance. Then return {"type":"startup"} and nothing else.
 - type "invalid" when the text is not a personal life decision. Then return {"type":"invalid"}.
-- Exactly 7 questions, 3 options each. risk is the multiplier on the yearly chance of stopping for each option (0.6 to 1.6; higher is riskier).
+- Exactly 7 questions, 3 options each, using exactly the keys "q", "o" and "risk" as in the shape above. Questions end politely (in Korean: ~인가요? or ~있나요?). risk is the multiplier on the yearly chance of stopping for each option (0.6 to 1.6; higher is riskier).
 - hazard: chance in each of years 1 to 10 that the person stops or the new path ends that year (0.01 to 0.4). Use the sources when they give rates.
 - The metric is an index where 1.0 means "the same as if I had not done it". start: index in year 1. growth: average yearly growth of the index while continuing. vol: yearly volatility. cap: maximum index. fallback: index after stopping. cost: upfront cost measured in years of the baseline.
 - facts: 3 to 5 sentences. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text, at most 80 characters, and must not contain double quote characters. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
@@ -120,9 +120,9 @@ Rules:
       if (j.type === "startup") return res.status(200).json({ startup: true });
       const num = (x, lo, hi, d) => { x = Number(x); return Number.isFinite(x) ? Math.max(lo, Math.min(hi, x)) : d; };
       const si = x => { x = Number(x); return Number.isInteger(x) && x >= 0 && x < sources.length ? x : -1; };
-      const qs = (Array.isArray(j.questions) ? j.questions : []).filter(x => x && x.q && Array.isArray(x.o) && x.o.length >= 2).slice(0, 8)
-        .map(x => { const o = x.o.slice(0, 4).map(y => clip(y, 40)); return { q: clip(x.q, 90), o, risk: o.map((_, k) => num((x.risk || [])[k], 0.5, 1.8, 1)) }; });
-      const hz = Array.isArray(j.hazard) ? j.hazard : [];
+      const qs = (Array.isArray(j.questions) ? j.questions : []).map(x => x && ({ q: x.q || x.question || x.text, o: x.o || x.options || x.choices || x.answers, risk: x.risk || x.risks || x.multipliers })).filter(x => x && x.q && Array.isArray(x.o) && x.o.length >= 2).slice(0, 7)
+        .map(x => { const o = x.o.slice(0, 4).map(y => clip(y && typeof y === "object" ? (y.label || y.text || y.o || "") : y, 40)); return { q: clip(x.q, 90), o, risk: o.map((_, k) => num((x.risk || [])[k], 0.5, 1.8, 1)) }; });
+      let hz = j.hazard || j.hazards || j.yearly_hazard; if (!Array.isArray(hz) || hz.length < 5) { hz = [0.12, 0.1, 0.08, 0.07, 0.06, 0.05, 0.05, 0.04, 0.04, 0.03]; j.hzSrc = -1; }
       if (j.type === "invalid" || qs.length < 4 || hz.length < 5 || !j.v) return res.status(200).json({ ok: false, why: `type=${j.type} qs=${qs.length} hz=${hz.length} v=${!!j.v} rawq=${Array.isArray(j.questions) ? j.questions.length : typeof j.questions}` });
       const v = {}; for (const k of ["act", "doing", "start", "fallback", "base", "metric"]) v[k] = clip(j.v[k] || "", 30);
       if (!v.act || !v.doing || !v.base || !v.metric) return res.status(200).json({ ok: false, why: "v " + JSON.stringify(v) });
@@ -133,7 +133,7 @@ Rules:
       const used = [...new Set(facts.map(f => f.s).concat([si(j.hzSrc)]).filter(x => x >= 0))], remap = {}; used.forEach((x, k) => remap[x] = k);
       const spec = { v, questions: qs, hazard: Array.from({ length: 10 }, (_, k) => num(hz[Math.min(k, hz.length - 1)], 0.005, 0.5, 0.08)), hzSrc: si(j.hzSrc) >= 0 ? remap[si(j.hzSrc)] : -1,
         start: num(j.start, 0.2, 1.5, 0.8), growth: num(j.growth, -0.05, 0.4, 0.08), vol: num(j.vol, 0.05, 0.4, 0.15), cap: num(j.cap, 1, 6, 3), fallback: num(j.fallback, 0.3, 1.2, 0.9), cost: num(j.cost, 0, 3, 0.3),
-        facts: facts.map(f => ({ t: f.t, s: f.s >= 0 ? remap[f.s] : -1 })), sources: used.map(x => ({ title: sources[x].title, url: sources[x].url })) };
+        facts: facts.map(f => ({ t: f.t, s: f.s >= 0 ? remap[f.s] : -1 })), sources: used.map(x => ({ title: sources[x].title, url: sources[x].url })), refs: sources.filter((_, i) => !used.includes(i)).slice(0, 4).map(x => ({ title: x.title, url: x.url })) };
       return res.status(200).json({ ok: true, spec, searched: sources.length, model: out.model });
     }
     return res.status(400).json({ error: "kind" });
