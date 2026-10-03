@@ -680,7 +680,7 @@ function setG(spec){G=spec||null;T.en=T0.en;T.ko=T0.ko;if(G){T[L]=Object.assign(
 function gT(L,S){const V=S.v,ko=L==="ko",t=T0[L],Qk=S.questions.map((Q,i)=>["g"+i,Q.q,Q.o]),alt={},adv={};
   S.questions.forEach((Q,i)=>{let j=0;Q.risk.forEach((x,k)=>{if(x<Q.risk[j])j=k});alt["g"+i]=ko?`"${Q.q}"의 답이 "${Q.o[j]}"일 때`:`If your answer to "${Q.q}" were "${Q.o[j]}"`;adv["g"+i]=ko?`"${Q.q}"에 "${Q.o[j]}"라고 답할 수 있게 먼저 준비해`:`get to where you can answer "${Q.o[j]}" to "${Q.q}"`});
   const tag=S.hzSrc>=0?(ko?"출처 기반":"sourced"):(ko?"AI 가정":"AI assumption");
-  const src=S.facts.map(f=>[f.s>=0&&S.sources[f.s]?S.sources[f.s].title:(ko?"AI 가정":"AI assumption"),f.t,f.s>=0&&S.sources[f.s]?S.sources[f.s].url:""]);
+  const src=S.facts.map(f=>[f.s>=0&&S.sources[f.s]?S.sources[f.s].title:(ko?"AI 가정":"AI assumption"),f.t,f.s>=0&&S.sources[f.s]?S.sources[f.s].url:""]).concat((S.refs||[]).map(r=>[r.title,ko?"검색으로 찾아 읽은 자료입니다. 위 수치에 직접 인용하지는 않았습니다.":"Found and read during research. Not quoted for the numbers above.",r.url]));
   const a1=(l,A)=>{let bi=-1,bd=0;S.questions.forEach((Q,i)=>{const d=Math.abs(Q.risk[A["g"+i]]-1);if(d>bd){bd=d;bi=i}});const a=[];
     if(bi>=0&&bd>=.08){const Q=S.questions[bi],up=Q.risk[A["g"+bi]]>1;a.push(ko?`"${Q.q}"에 "${Q.o[A["g"+bi]]}"인 채로 시작한 게 ${up?"발목을 잡았어":"버팀목이 됐어"}.`:`Starting with "${Q.o[A["g"+bi]]}" on "${Q.q}" ${up?"held me back":"carried me"}.`)}
     else a.push(ko?"출발 조건은 평범했어.":"My starting conditions were ordinary.");
