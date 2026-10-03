@@ -34,7 +34,7 @@ function context(b) {
 The person's decision: ${clip(b.decision, 300)}
 What they told us about themselves:
 ${clip(b.profile, 2500)}
-Rules: answer in ${lang}. Use only the facts given. Never invent numbers, companies or events that are not in the facts. No advice-column tone, no bullet points, no markdown.` };
+Rules: answer in ${lang}. Use only the facts given. Never invent numbers, companies or events that are not in the facts. No advice-column tone, no bullet points, no markdown.${lang==="Korean"?" Speak in casual Korean (반말), the way a person talks to themselves. Never use 존댓말.":""}` };
 }
 
 export default async function handler(req, res) {
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
       if (!lives.length) return res.status(400).json({ error: "no lives" });
       const out = await complete([
         { role: "system", content: base + `\nSeveral versions of this person, each of whom lived a different one of the 1,000 lives, are asked the same question. Each answers from their own facts, so people with different outcomes should often disagree.
-Return ONLY JSON: {"options":[2 or 3 short answer labels, at most 3 words each],"answers":[{"n":life number,"option":index into options,"say":"one first-person sentence, specific to that life"}],"takeaway":"one sentence on what separates the groups"}
+Return ONLY JSON: {"options":[2 or 3 short answer labels, at most 3 words each, only labels that at least one life actually chooses],"answers":[{"n":life number,"option":index into options,"say":"one first-person sentence, specific to that life"}],"takeaway":"one sentence on what separates the groups"}
 Include every life exactly once in answers.` },
         { role: "user", content: `Outcome counts across all lives [success, landed safely, past loss limit]: ${clip(JSON.stringify(b.counts), 60)}\nThe lives answering:\n${clip(JSON.stringify(lives), 14000)}\n\nQuestion to all of them: ${q}` },
       ], { json: true, max: 1100 });
