@@ -20,7 +20,9 @@ async function complete(messages, { json = false, max = 500 } = {}) {
       headers: { "content-type": "application/json", authorization: "Bearer " + process.env.NEBIUS_API_KEY },
       body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: max, ...(json ? { response_format: { type: "json_object" } } : {}) }),
     });
-    if (r.ok) { const d = await r.json(); return { model, text: strip(d.choices?.[0]?.message?.content) }; }
+    if (r.ok) { const d = await r.json(); let text = strip(d.choices?.[0]?.message?.content);
+      if (!json && d.choices?.[0]?.finish_reason === "length") { const k = Math.max(text.lastIndexOf("."), text.lastIndexOf("?"), text.lastIndexOf("!")); if (k > 20) text = text.slice(0, k + 1); }
+      return { model, text }; }
     last = r.status + " " + clip(await r.text(), 300);
     if (r.status === 401 || r.status === 403) break; // bad key: a second model will not help
   }
@@ -52,7 +54,7 @@ export default async function handler(req, res) {
       const out = await complete([
         { role: "system", content: base + `\nYou are the version of this person who lived life #${clip(b.life?.n, 6)}. Speak in the first person, to your earlier self, plainly and specifically. At most 4 sentences.` },
         { role: "user", content: `Facts of the life you lived:\n${clip(JSON.stringify(b.life), 3000)}\n\nYour earlier self asks: ${q}` },
-      ], { max: 350 });
+      ], { max: 1200 });
       return res.status(200).json({ text: out.text, model: out.model });
     }
     if (b.kind === "crowd") {
@@ -63,7 +65,7 @@ export default async function handler(req, res) {
 Return ONLY JSON: {"options":[2 or 3 short answer labels, at most 3 words each, only labels that at least one life actually chooses],"answers":[{"n":life number,"option":index into options,"say":"one first-person sentence, specific to that life"}],"takeaway":"one sentence on what separates the groups"}
 Include every life exactly once in answers.` },
         { role: "user", content: `Outcome counts across all lives [success, landed safely, past loss limit]: ${clip(JSON.stringify(b.counts), 60)}\nThe lives answering:\n${clip(JSON.stringify(lives), 14000)}\n\nQuestion to all of them: ${q}` },
-      ], { json: true, max: 1100 });
+      ], { json: true, max: 3500 });
       const m = out.text.match(/\{[\s\S]*\}/);
       const j = JSON.parse(m ? m[0] : out.text);
       return res.status(200).json({ options: j.options, answers: j.answers, takeaway: j.takeaway, model: out.model });
