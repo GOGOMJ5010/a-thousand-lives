@@ -194,17 +194,17 @@ c1:"succeeded by your own definition",c2:"did not succeed, landed safely",c3:"lo
 dh2:"One of your lives",nh:"What happened across the thousand",ih:"Your income in year ten",fh:"What changes the odds",
 askh:"Ask all of them at once",askp:"One question, every version of you answers. They regroup by what they say.",askq:["Would you do it again?","What do you regret most?","When was it hardest?"],askback:"Back to outcomes",
 ag:["Yes","No"],rg:{none:"Nothing",sooner:"Not starting sooner",cust:"Quitting with no customer",late:"Not stopping in time",luck:"Nothing. It was luck"},hg:["Years 1–2","Years 3–5","Year 6 on"],
-dbh:"Two of you disagree",dbnote:"Scripted from the two lives' records. A live model replaces this in the next build.",
+dbh:"Two of you disagree",dbnote:"Scripted from the two lives' records.",
 db:(y,n,A)=>[[y.n,y.cls===0?`I would do it again. I make ${y.amt} now and I chose every day of it.`:`I would do it again. I closed, and I lost ${y.lossA}, but I know what I can do now.`],[n.n,`I would not. I lost ${n.lossA} and closed in year ${n.closed}.${A.cust?"":" I walked out with no one paying me."}`],[y.n,A.cust?"We started from the same place. The difference between us was luck, and you should tell them that.":"Then the problem was how we left, not that we left. Tell them to get one customer first."]],
-liveh:"Check you are on track",livep:"Record where you are whenever you want to know. You get your record up to that point, and the future recalculated from it.",liveb:x=>`Record ${x} now`,left:" lives still possible",of:"",pnow:"chance of success, by your definition",since:"since last time",startL:"Start",posL:x=>`At this point you are ahead of <b>${100-x}%</b> of the versions of you still running.`,tgt:(a,b,g,z)=>`Target for ${a}: income at a yearly rate of <b>${b}</b> or more. Lives that reached it succeeded <b>${g}%</b> of the time. Lives that did not: ${z}%.`,nosucc:y=>`None of the remaining lives end in success. The ones that landed safely closed around year ${y}.`,warn:x=>`<b>${x}%</b> of the remaining lives go past your loss limit. Watch what you have lost so far.`,rec:(a,d)=>`Suggested next check-in: <b>${a}</b>, ${d}. You can record at any time in between.`,nowb:"Record where I am now",when:a=>`Today is ${a} since you started. Adjust it to record a different moment.`,mo:" mo",okb:x=>`Record as ${x}`,cnow:"now",leg:"White line: the path you recorded. Bright band: forecast from your latest record (10th to 90th percentile). Faint band: the first forecast. Dashed: if you had stayed. Scale: multiples of your old salary.",pastl:"What you have recorded",forel:"Forecast from your latest record",logl:(p,n)=>`Chance of success then ${p}%, ${n} lives left`,logre:p=>`Chance of success then ${p}%, re-lived 1,000 times from this point`,f_run:x=>`<b>${x}%</b> of the remaining lives are still in business a year from now.`,f_inc:(a,b,c)=>`Income a year from now: typically <b>${a}</b>, ranging from ${b} to ${c}.`,f_10:a=>`Income in year ten, middle life: <b>${a}</b>.`,oneb:"Show the one closest to me",
+liveh:"Check you are on track",livep:"Record where you are whenever you want to know. You get your record up to that point, and the future recalculated from it.",liveb:x=>`Record ${x} now`,left:" lives still possible",of:"",pnow:"chance of success, by your definition",since:"since last time",startL:"Start",posL:x=>`At this point you are ahead of <b>${100-x}%</b> of the versions of you still running.`,tgt:(a,b,g,z)=>`Target for ${a}: income at a yearly rate of <b>${b}</b> or more. Lives that reached it succeeded <b>${g}%</b> of the time. Lives that did not: ${z}%.`,nosucc:y=>`None of the remaining lives end in success. The ones that landed safely closed around year ${y}.`,warn:x=>`<b>${x}%</b> of the remaining lives go past your loss limit. Watch what you have lost so far.`,rec:(a,d)=>`Suggested next check-in: <b>${a}</b>, ${d}. You can record at any time in between.`,nowb:"Record where I am now",when:a=>`Today is ${a} since you started. Adjust it to record a different moment.`,mo:" mo",okb:x=>`Record as ${x}`,cnow:"now",leg:"Gold line: the path you recorded. Bright band: forecast from your latest record (10th to 90th percentile). Faint band: the first forecast. Dashed: if you had stayed. Scale: multiples of your old salary.",pastl:"What you have recorded",forel:"Forecast from your latest record",logl:(p,n)=>`Chance of success then ${p}%, ${n} lives left`,logre:p=>`Chance of success then ${p}%, re-lived 1,000 times from this point`,f_run:x=>`<b>${x}%</b> of the remaining lives are still in business a year from now.`,f_inc:(a,b,c)=>`Income a year from now: typically <b>${a}</b>, ranging from ${b} to ${c}.`,f_10:a=>`Income in year ten, middle life: <b>${a}</b>.`,oneb:"Show the one closest to me",
 ck1:x=>`At ${x}: where is the business?`,ck1o:["Still running, same idea","Still running, changed direction","Closed"],ck2:"And your income, against your old salary?",ck2o:["Under a quarter","A quarter to half","Half to about the same","Up to 1.5 times","More than 1.5 times"],
 re:"What you reported was rare among the thousand, so it lived the thousand again from where you are now.",reL:"lives re-lived from where you are now",none:"None of the thousand lived that. You are on a road outside all of them.",
 finh:"The one closest to the life you are living",finp:(n,k)=>`Of the ${k} lives still possible, life #${n} sits in the middle. Here is how its remaining years went.`,finb:"See all remaining lives",
 srch:"Where the numbers come from",
 src:[["U.S. Bureau of Labor Statistics","Of businesses opened in 2013, 79.6% were open after one year, 50.6% after five and 34.7% after ten. The yearly closing odds in every life follow this curve, adjusted by industry.","https://www.bls.gov/opub/ted/2024/34-7-percent-of-business-establishments-born-in-2013-were-still-operating-in-2023.htm"],["Statistics Korea, business demography (2024, reported Oct 2025)","In Korea, 64.4% of new firms survive one year and 36.4% survive five. Used when the page is in Korean.","https://www.heraldk.com/article/2025102219001230705"],["Federal Reserve Bank of Minneapolis, On the Nature of Entrepreneurship (2025)","Self-employed income is far more unequal than wages: 80% of it goes to people earning over $100k. This is why the lucky tenth sits so far from the middle.","https://fortune.com/2025/09/27/entrepreneur-earnings-self-employed-vs-paid-employees-founders"]],
-srcnote:"Sourced: the yearly survival curve and its industry differences. Assumed by us: how much experience, customers, savings and a partner shift those odds, and how income grows. Conversations are scripted from each life's record.",
+srcnote:"Sourced: the yearly survival curve and its industry differences. Assumed by us: how much experience, customers, savings and a partner shift those odds, and how income grows. Conversations are answered live by Nemotron from each life's record.",
 cite:(p)=>`${p}% of new businesses close in this year of life (BLS).`,citeK:(p)=>`${p}% of new businesses close in this year of life (Statistics Korea, BLS).`,
-note:"v3 preview. The next build researches sources live for each decision and replaces scripted conversations with a live model.",
+note:"A statistical sketch, not a prediction. Conversations are answered live by NVIDIA Nemotron on Nebius Token Factory.",
 life:n=>`Life #${n}`,year:y=>`Year ${y}`,
 tg:["Succeeded by your definition","Did not succeed, landed safely","Lost more than your limit"],
 ev:{quit:a=>`Quit the job. First-year income ${a}.`,grow:a=>`Business grew. Income ${a}.`,flat:a=>`A flat year. Income ${a}.`,pivot:"The business stalled. Changed direction instead of closing.",fail:"The business failed. Went back to a job.",line:"Losses passed the limit you set. Closed and went back to a job.",hor:"Time ran out before it paid the bills. Closed and went back to a job.",job:a=>`Working for a company. Income ${a}.`},
@@ -227,17 +227,17 @@ c1:"내 기준으로 성공",c2:"성공은 못 했지만 무사히 착지",c3:"�
 dh2:"천 개 중 하나의 인생",nh:"천 번의 인생에서 일어난 일",ih:"10년 차의 내 수입",fh:"무엇이 확률을 바꾸는가",
 askh:"천 명에게 동시에 묻기",askp:"질문 하나에 모든 내가 대답합니다. 대답에 따라 다시 갈라섭니다.",askq:["다시 해도 할 거야?","가장 후회하는 건?","언제가 제일 힘들었어?"],askback:"결과로 돌아가기",
 ag:["한다","안 한다"],rg:{none:"후회 없음",sooner:"더 일찍 시작하지 않은 것",cust:"고객 없이 나온 것",late:"멈출 때를 놓친 것",luck:"없음. 운이었다"},hg:["1~2년 차","3~5년 차","6년 차 이후"],
-dbh:"두 명의 내가 맞섭니다",dbnote:"두 인생의 기록으로 만든 고정 대사입니다. 다음 버전에서 실제 모델로 바뀝니다.",
+dbh:"두 명의 내가 맞섭니다",dbnote:"두 인생의 기록으로 만든 대사입니다.",
 db:(y,n,A)=>[[y.n,y.cls===0?`나는 다시 해. 지금 ${y.amt}을 벌고 있고, 하루하루를 내가 골랐어.`:`나는 다시 해. 접었고 ${y.lossA}을 잃었지만, 내가 뭘 할 수 있는지 알게 됐어.`],[n.n,`나는 안 해. ${n.lossA}을 잃고 ${n.closed}년 차에 접었어.${A.cust?"":" 돈 내는 사람 하나 없이 나왔으니까."}`],[y.n,A.cust?"우리는 같은 자리에서 출발했어. 우리를 가른 건 운이었고, 그 사실을 꼭 전해줘.":"그러면 문제는 나온 방식이지, 나온 것 자체가 아니야. 고객 한 명부터 만들고 나오라고 전해줘."]],
-liveh:"잘 가고 있는지 확인하기",livep:"궁금할 때 언제든 지금 상태를 기록하세요. 그 시점까지의 기록과, 그 시점을 기준으로 다시 계산한 앞날을 보여드립니다.",liveb:x=>`${x} 지금 기록하기`,left:"개 남음",of:"천 개 중",pnow:"내 기준 성공 확률",since:"지난번 대비",startL:"시작",posL:x=>`지금 시점에 아직 사업 중인 나들 가운데 <b>상위 ${x}%</b>에 있습니다.`,tgt:(a,b,g,z)=>`${a} 목표: 연 환산 수입 <b>${b}</b> 이상. 여기에 도달한 인생은 <b>${g}%</b>가 성공했고, 못 미친 인생은 ${z}%였습니다.`,nosucc:y=>`남은 인생 중 성공으로 끝나는 건 없습니다. 무사히 착지한 인생들은 ${y}년 차 무렵에 접었습니다.`,warn:x=>`남은 인생의 <b>${x}%</b>가 한계선을 넘습니다. 지금까지 잃은 돈을 확인하세요.`,rec:(a,d)=>`권장 체크인: <b>${a}</b>, ${d}. 그 사이 언제든 기록할 수 있습니다.`,nowb:"지금 상태 기록하기",when:a=>`오늘은 시작 후 ${a}입니다. 다른 시점을 기록하려면 조정하세요.`,mo:"개월",okb:x=>`${x}로 기록`,cnow:"지금",leg:"흰 선: 내가 기록한 길. 밝은 띠: 최근 기록 기준 예측 (하위 10%~상위 10%). 옅은 띠: 처음 예측. 점선: 회사에 남았다면. 눈금: 예전 연봉의 배수.",pastl:"지나온 기록",forel:"최근 기록 기준 예측",logl:(p,n)=>`당시 성공 확률 ${p}%, 남은 인생 ${n}개`,logre:p=>`당시 성공 확률 ${p}%, 이 지점에서 천 번 다시 살아봄`,f_run:x=>`남은 인생 중 <b>${x}%</b>가 1년 뒤에도 사업 중입니다.`,f_inc:(a,b,c)=>`1년 뒤 수입: 보통 <b>${a}</b>, 범위는 ${b}에서 ${c}.`,f_10:a=>`10년 차 수입 중간값: <b>${a}</b>.`,oneb:"가장 가까운 하나 보기",
+liveh:"잘 가고 있는지 확인하기",livep:"궁금할 때 언제든 지금 상태를 기록하세요. 그 시점까지의 기록과, 그 시점을 기준으로 다시 계산한 앞날을 보여드립니다.",liveb:x=>`${x} 지금 기록하기`,left:"개 남음",of:"천 개 중",pnow:"내 기준 성공 확률",since:"지난번 대비",startL:"시작",posL:x=>`지금 시점에 아직 사업 중인 나들 가운데 <b>상위 ${x}%</b>에 있습니다.`,tgt:(a,b,g,z)=>`${a} 목표: 연 환산 수입 <b>${b}</b> 이상. 여기에 도달한 인생은 <b>${g}%</b>가 성공했고, 못 미친 인생은 ${z}%였습니다.`,nosucc:y=>`남은 인생 중 성공으로 끝나는 건 없습니다. 무사히 착지한 인생들은 ${y}년 차 무렵에 접었습니다.`,warn:x=>`남은 인생의 <b>${x}%</b>가 한계선을 넘습니다. 지금까지 잃은 돈을 확인하세요.`,rec:(a,d)=>`권장 체크인: <b>${a}</b>, ${d}. 그 사이 언제든 기록할 수 있습니다.`,nowb:"지금 상태 기록하기",when:a=>`오늘은 시작 후 ${a}입니다. 다른 시점을 기록하려면 조정하세요.`,mo:"개월",okb:x=>`${x}로 기록`,cnow:"지금",leg:"금색 선: 내가 기록한 길. 밝은 띠: 최근 기록 기준 예측 (하위 10%~상위 10%). 옅은 띠: 처음 예측. 점선: 회사에 남았다면. 눈금: 예전 연봉의 배수.",pastl:"지나온 기록",forel:"최근 기록 기준 예측",logl:(p,n)=>`당시 성공 확률 ${p}%, 남은 인생 ${n}개`,logre:p=>`당시 성공 확률 ${p}%, 이 지점에서 천 번 다시 살아봄`,f_run:x=>`남은 인생 중 <b>${x}%</b>가 1년 뒤에도 사업 중입니다.`,f_inc:(a,b,c)=>`1년 뒤 수입: 보통 <b>${a}</b>, 범위는 ${b}에서 ${c}.`,f_10:a=>`10년 차 수입 중간값: <b>${a}</b>.`,oneb:"가장 가까운 하나 보기",
 ck1:x=>`${x}, 사업은 어떻게 됐나요?`,ck1o:["같은 아이템으로 계속 중","방향을 바꿔서 계속 중","접었음"],ck2:"수입은 예전 월급과 비교해 어떤가요?",ck2o:["4분의 1 이하","4분의 1에서 절반","절반에서 비슷한 수준","1.5배까지","1.5배 이상"],
 re:"기록한 상황이 천 개 안에서 드물어서, 지금 지점에서 천 번을 다시 살아봤습니다.",reL:"지금 지점에서 다시 살아본 인생",none:"천 개 중에 그런 인생은 없었습니다. 당신은 천 개 밖의 길을 가고 있습니다.",
 finh:"지금 살고 있는 인생에 가장 가까운 하나",finp:(n,k)=>`아직 가능한 ${k}개 중 한가운데에 있는 건 ${n}번째 인생입니다. 그 인생의 남은 시간은 이랬습니다.`,finb:"남은 인생 전부 보기",
 srch:"이 숫자의 근거",
 src:[["미국 노동통계국 (BLS)","2013년에 문을 연 사업체 중 1년 뒤 79.6%, 5년 뒤 50.6%, 10년 뒤 34.7%가 남았습니다. 모든 인생의 연차별 폐업 확률은 이 곡선을 업종별로 조정해 씁니다.","https://www.bls.gov/opub/ted/2024/34-7-percent-of-business-establishments-born-in-2013-were-still-operating-in-2023.htm"],["국가데이터처 기업생멸행정통계 (2024년 기준, 2025년 10월 보도)","한국 신생기업의 1년 생존율은 64.4%, 5년 생존율은 36.4%입니다. 한국어 화면에서는 이 수치로 곡선을 보정합니다.","https://www.heraldk.com/article/2025102219001230705"],["미니애폴리스 연방준비은행, On the Nature of Entrepreneurship (2025)","자영업 소득은 임금보다 훨씬 불평등합니다. 전체의 80%가 연 10만 달러 이상 버는 사람에게 몰려 있습니다. 운이 좋은 10%가 중간과 크게 벌어지는 이유입니다.","https://fortune.com/2025/09/27/entrepreneur-earnings-self-employed-vs-paid-employees-founders"]],
-srcnote:"근거가 있는 것: 연차별 생존 곡선과 업종 차이. 우리가 가정한 것: 경험, 고객, 저축, 동업이 그 확률을 얼마나 바꾸는지와 수입이 자라는 속도. 대화는 각 인생의 기록으로 만든 고정 답변입니다.",
+srcnote:"근거가 있는 것: 연차별 생존 곡선과 업종 차이. 우리가 가정한 것: 경험, 고객, 저축, 동업이 그 확률을 얼마나 바꾸는지와 수입이 자라는 속도. 대화는 각 인생의 기록을 근거로 Nemotron이 실시간으로 답합니다.",
 cite:(p)=>`이 연차에 신생 사업체의 ${p}%가 문을 닫습니다 (BLS).`,citeK:(p)=>`이 연차에 신생 사업체의 ${p}%가 문을 닫습니다 (국가데이터처, BLS 보정).`,
-note:"v3 미리보기입니다. 다음 버전에서는 고민마다 근거를 실시간으로 조사하고, 고정 대화를 실제 모델로 바꿉니다.",
+note:"통계로 그린 스케치이지 예언이 아닙니다. 대화는 Nebius Token Factory의 NVIDIA Nemotron이 실시간으로 답합니다.",
 life:n=>`${n}번째 인생`,year:y=>`${y}년 차`,
 tg:["내 기준으로 성공","성공은 못 했지만 무사히 착지","정해둔 한계선을 넘음"],
 ev:{quit:a=>`퇴사. 첫 해 수입 ${a}.`,grow:a=>`사업 성장. 수입 ${a}.`,flat:a=>`제자리걸음. 수입 ${a}.`,pivot:"사업이 흔들림. 접지 않고 방향을 바꿈.",fail:"사업 실패. 재취업.",line:"손실이 정해둔 한계선을 넘음. 사업을 접고 재취업.",hor:"정한 기한까지 생활비를 벌지 못함. 사업을 접고 재취업.",job:a=>`회사 근무. 수입 ${a}.`},
@@ -262,12 +262,13 @@ const CKY=[1,3,5];
 let A=Object.assign({},DEF),step=-1,lives=[],base=[],sel=-1,phase="one",best=null,mode="cls",checks=[],haz=[];
 let alive=new Uint8Array(1000).fill(1),t0=0,pcol="#fff";
 const SAL={ko:[2500,4000,6500,10000,15000],en:[25,40,65,100,150]};
-function fmt(x){const v=x*SAL[L][A.inc];if(L==="ko"){if(v>=10000){const e=Math.round(v/1000)/10;return e+"억 원"}return (Math.round(v/100)*100).toLocaleString("ko-KR")+"만 원"}return "$"+Math.round(v)+"k"}
-function store(){try{localStorage.setItem("tl1k",JSON.stringify({A,checks,L,t0,left:pool().length}))}catch(e){}}
+function fmtL(x){if(!G)return fmt(x);const r=(Math.round(x*10)/10).toFixed(1);return L==="ko"?r+"년 치":r+" years"}
+function fmt(x){if(G){const r=(Math.round(x*10)/10).toFixed(1);return L==="ko"?r+"배":r+"x"}const v=x*SAL[L][A.inc];if(L==="ko"){if(v>=10000){const e=Math.round(v/1000)/10;return e+"억 원"}return (Math.round(v/100)*100).toLocaleString("ko-KR")+"만 원"}return "$"+Math.round(v)+"k"}
+function store(){try{localStorage.setItem("tl1k",JSON.stringify({A,checks,L,t0,left:pool().length,G,q:qText}))}catch(e){}}
 function load(){try{return JSON.parse(localStorage.getItem("tl1k")||"null")}catch(e){return null}}
 function paint(){const t=T[L];document.documentElement.lang=L;$("lang").textContent=t.lang;
   document.querySelectorAll("[data-t]").forEach(e=>{const v=t[e.dataset.t];if(typeof v==="string")e.innerHTML=v});
-  $("src").innerHTML=t.src.map(s=>`<div class="find"><b>${s[0]}</b><br>${s[1]} <a href="${s[2]}" target="_blank" rel="noopener">↗</a></div>`).join("")+`<div class="find">${t.srcnote}</div>`;
+  $("src").innerHTML=t.src.map(s=>`<div class="find"><b>${s[0]}</b><br>${s[1]} ${s[2]?`<a href="${s[2]}" target="_blank" rel="noopener">↗</a>`:""}</div>`).join("")+`<div class="find">${t.srcnote}</div>`;
   const sv=load(),rb=$("resume");if(sv&&sv.checks&&sv.checks.length&&phase==="one"){rb.classList.remove("hide");rb.textContent=t.resume(sv.left||"")}else rb.classList.add("hide");
   drawStory(true);
   if(step>=0&&phase==="one")ask();
@@ -280,7 +281,8 @@ const BLS=[.204,.134,.109,.099,.085,.077,.084,.068,.058,.077],CAL=1.25;
 const idx=(inc,sat)=>Math.max(.03,Math.min(.97,.5*Math.min(inc,3)/3+.5*sat));
 const stay=y=>Math.pow(1.03,y);
 function hazards(a){const m=[1.166,.826,1.11,.784,1][a.ind];return BLS.map((h,i)=>{let s=1-h;if(L==="ko")s=i===0?.644:Math.pow(s,1.262);return 1-Math.pow(s,m)})}
-function sim(a,from){
+function sim(a,from){return G?simG(a,from):simS(a,from)}
+function simS(a,from){
   const r=rng(20261030),g=()=>{let u=0;for(let i=0;i<6;i++)u+=r();return u-3};
   let burn=[.45,.7,.92][a.spend]+[0,.06,.12][a.dep]+[0,.06,.15][a.debt];if(a.other)burn*=.6;const live=burn;burn*=.78;
   const H=hazards(a);if(a===A)haz=H;
@@ -464,9 +466,9 @@ function start(){
   setTimeout(()=>{if(phase!=="k")return;for(let i=0;i<NL;i++){tx[i]=-fw/2;ty[i]=(.5-base[0])*fh*1.7+fh*.1;tz[i]=0}dustOut();burst(14);stiff=.03},1700);
   setTimeout(()=>{if(phase!=="k")return;phase="sim";trail=.012;stiff=.3;cx.fillStyle="#000";cx.fillRect(0,0,W,H);simStart=performance.now()},2700);
 }
-function reset(){try{localStorage.removeItem("tl1k")}catch(e){}burst(22);phase="one";sel=-1;step=-1;checks=[];alive.fill(1);cyOff=.4;trail=.3;stiff=.022;heroState(true);
+function reset(){try{localStorage.removeItem("tl1k")}catch(e){}setG(null);burst(22);phase="one";sel=-1;step=-1;checks=[];alive.fill(1);cyOff=.4;trail=.3;stiff=.022;heroState(true);
   ["stage","after","again","iv"].forEach(i=>$(i).classList.add("hide"));$("hero").classList.remove("hide");scrollTo(0,0);paint()}
-function resume(){const sv=load();if(!sv)return;$("resume").classList.add("hide");ST.classList.add("off");A=sv.A;t0=sv.t0||Date.now();checks=sv.checks||[];recount();
+function resume(){const sv=load();if(!sv)return;$("resume").classList.add("hide");ST.classList.add("off");setG(sv.G||null);qText=sv.q||"";A=sv.A;t0=sv.t0||Date.now();checks=sv.checks||[];recount();
   ["hero","iv"].forEach(i=>$(i).classList.add("hide"));["stage","again"].forEach(i=>$(i).classList.remove("hide"));$("yr").textContent="10";cyOff=.42;dustOut();
   phase="end";trail=.3;stiff=.02;mode="cls";applyMode();for(let i=NL;i<N;i++)ta[i]=.08+R()*.1;summary();askUI();liveUI();["after","hint"].forEach(i=>$(i).classList.remove("hide"));
   $("live").textContent=pool().filter(l=>l.biz).length;scrollTo(0,0)}
@@ -480,8 +482,8 @@ function ask(){
   if(step===0){
     $("qq").textContent=t.q0;$("ivnote").textContent=t.ivnote;
     const ta=document.createElement("textarea");ta.id="q";ta.value=qText;ta.placeholder=t.qv;o.appendChild(ta);
-    const b=document.createElement("button");b.className="pill solid go";b.style.marginTop="14px";b.textContent=t.next;b.onclick=()=>{qText=ta.value.trim();step=1;burst(7);ask()};o.appendChild(b);
-    const s=document.createElement("button");s.className="pill";s.style.marginTop="4px";s.textContent=t.ex;s.onclick=()=>{A=Object.assign({},DEF);start()};o.appendChild(s);
+    const b=document.createElement("button");b.className="pill solid go";b.style.marginTop="14px";b.textContent=t.next;b.onclick=()=>{qText=ta.value.trim();burst(7);if(!qText){setG(null);step=1;ask()}else plan()};o.appendChild(b);
+    const s=document.createElement("button");s.className="pill";s.style.marginTop="4px";s.textContent=t.ex;s.onclick=()=>{setG(null);qText="";A=Object.assign({},DEF);start()};o.appendChild(s);
     return;
   }
   $("ivnote").textContent="";
@@ -498,20 +500,21 @@ function summary(){
   const f=[],ln=P.filter(l=>l.line),bt=P.filter(l=>l.beat),cl=P.filter(l=>l.closed);
   f.push(ln.length?t.f1(ln.length,L==="ko"?P.length:P.length.toLocaleString(),(ln.reduce((s,l)=>s+l.line,0)/ln.length).toFixed(1)):t.f1z);
   f.push(bt.length>=Math.max(3,P.length*.02)?t.f2(Math.round(100*bt.length/P.length),med(bt.map(l=>l.beat))):t.f2z);
-  if(cl.length>=5)f.push(t.f3(fmt(med(cl.map(l=>l.loss)))));
+  if(cl.length>=5)f.push(t.f3(fmtL(med(cl.map(l=>l.loss)))));
   const inc=P.map(l=>l.inc);f.push(t.f4(fmt(stay(10)),fmt(med(inc))));
   $("facts").innerHTML=f.map(x=>`<div class="find">${x}</div>`).join("");
   $("nums").innerHTML=[.1,.5,.9].map((p,k)=>`<div><b>${fmt(q(inc,p))}</b><span>${t.p[k]}</span></div>`).join("");
   const cfw=$("cfwrap");if(checks.length){cfw.classList.add("hide");return}cfw.classList.remove("hide");
   const s0=pct(lives,l=>l.cls===0),l0=pct(lives,l=>l.cls===2),alts=[];
-  [["cust",1,2],["run",1,3],["exp",1,2],["inv",-1,3],["hor",1,3],["back",-1,2],["other",1,1]].forEach(([k,d,mx])=>{
+  if(G)G.questions.forEach((Q,i)=>{let j=0;Q.risk.forEach((x,k)=>{if(x<Q.risk[j])j=k});if(j===A["g"+i]||Q.risk[A["g"+i]]-Q.risk[j]<.05)return;const b=Object.assign({},A);b["g"+i]=j;const x=sim(b);alts.push([pct(x,l=>l.cls===0)-s0,"g"+i,pct(x,l=>l.cls===0),pct(x,l=>l.cls===2)])});
+  else [["cust",1,2],["run",1,3],["exp",1,2],["inv",-1,3],["hor",1,3],["back",-1,2],["other",1,1]].forEach(([k,d,mx])=>{
     const v=A[k]+d;if(v<0||v>mx)return;const b=Object.assign({},A);b[k]=v;const x=sim(b);alts.push([pct(x,l=>l.cls===0)-s0,k,pct(x,l=>l.cls===0),pct(x,l=>l.cls===2)])});
   alts.sort((a,b)=>b[0]-a[0]);const top=alts.filter(a=>a[0]>=2).slice(0,3);best=top.length?top[0][1]:null;
   $("finds").innerHTML=top.length?top.map(a=>`<div class="find">${t.cfl(t.alt[a[1]],s0,a[2],l0,a[3])}</div>`).join(""):`<div class="find">${t.cfz}</div>`;
 }
 function tl(l,from){const t=T[L];return l.ev.filter(e=>e[0]>from).map(e=>{const v=t.ev[e[1]];let s=typeof v==="function"?v(fmt(e[2])):v;if(e[3])s+=` <em>${(L==="ko"?t.citeK:t.cite)(e[3])}</em>`;return`<li><i>${t.year(e[0])}</i><span>${s}</span></li>`}).join("")}
 function show(i){
-  sel=i;const l=lives[i],t=T[L];l.amt=fmt(l.inc);l.lossA=fmt(l.loss);
+  sel=i;const l=lives[i],t=T[L];l.amt=fmt(l.inc);l.lossA=fmtL(l.loss);
   $("dh").textContent=t.life(i+1);$("dtag").textContent=t.tg[l.cls];$("dtl").innerHTML=tl(l,0);
   $("dqs").innerHTML="";$("dans").classList.add("hide");if($("aitag"))$("aitag").remove();
   t.qs.forEach((qq,k)=>{const b=document.createElement("button");b.className="pill";b.textContent=qq;b.onclick=()=>{const a=$("dans");a.textContent=k===0?t.a0(l):k===1?t.a1(l,A):t.a2(best?(t.adv||t.alt)[best]:"");a.classList.remove("hide")};$("dqs").appendChild(b)});
@@ -529,7 +532,7 @@ function askUI(){
   const d=$("debate");
   if(mode==="ai"&&aiG){d.innerHTML=`<h2>${esc(aiG.q)}</h2>`+aiG.voices.map(x=>`<div class="say"><i>#${x.n}</i><span>${esc(x.say)}</span></div>`).join("")+(aiG.takeaway?`<div class="find"><b>${esc(aiG.takeaway)}</b></div>`:"")+`<p class="note" style="margin-top:10px">${t.ainote(aiG.voices.length)}</p>`}
   else if(mode==="again"){const P=pool(),y=P.find(l=>l.again&&l.cls===0)||P.find(l=>l.again),n=P.find(l=>!l.again&&l.closed);
-    if(y&&n){[y,n].forEach(l=>{l.amt=fmt(l.inc);l.lossA=fmt(l.loss)});
+    if(y&&n){[y,n].forEach(l=>{l.amt=fmt(l.inc);l.lossA=fmtL(l.loss)});
       d.innerHTML=`<h2>${t.dbh}</h2>`+t.db(y,n,A).map(x=>`<div class="say"><i>#${x[0]}</i><span>${x[1]}</span></div>`).join("")+`<p class="note" style="margin-top:10px">${t.dbnote}</p>`}else d.innerHTML=""}
   else d.innerHTML="";
 }
@@ -627,7 +630,7 @@ function fin(){
   phase="fin";sel=-1;cyOff=.3;burst(24);for(let i=0;i<N;i++)ta[i]=.35+R()*.65;toShape("1");stiff=.022;
   ["hint","after"].forEach(i=>$(i).classList.add("hide"));$("final").classList.remove("hide");$("final").dataset.n=l.n;finUI();scrollTo(0,0);
 }
-function finUI(){const t=T[L],l=lives[+$("final").dataset.n-1],k=pool().length;l.amt=fmt(l.inc);l.lossA=fmt(l.loss);
+function finUI(){const t=T[L],l=lives[+$("final").dataset.n-1],k=pool().length;l.amt=fmt(l.inc);l.lossA=fmtL(l.loss);
   $("finp").textContent=t.finp(l.n,k);$("fint").textContent=t.tg[l.cls];$("fintl").innerHTML=tl(l,checks.length?Math.floor(checks[checks.length-1].t):0)||`<li><i>${t.year(10)}</i><span>${t.ev.job(l.amt)}</span></li>`;$("fina").textContent=t.a0(l)}
 $("finb").onclick=()=>{phase="end";cyOff=.42;stiff=.02;burst(18);dustOut();for(let i=NL;i<N;i++)ta[i]=.08+R()*.1;applyMode();["hint","after"].forEach(i=>$(i).classList.remove("hide"));$("final").classList.add("hide");scrollTo(0,0)};
 
@@ -650,7 +653,7 @@ Object.assign(T.en,{aiq1:"Ask this life anything",aiq2:"Ask all thousand your ow
 Object.assign(T.ko,{aiq1:"이 인생에게 직접 묻기",aiq2:"천 명에게 내 질문 던지기",aisend:"묻기",aiwait:"생각하는 중\u2026",aioff:"여기서는 실시간 AI가 연결되어 있지 않습니다. 위의 예시 질문을 눌러보세요.",aitag:"Nemotron이 실시간으로 답함",ainote:n=>`이 중 ${n}개의 인생이 Nebius의 Nemotron으로 실시간 답했습니다. 나머지 인생은 그 ${n}개 중 가장 비슷한 인생과 같은 쪽으로 묶었습니다.`});
 const esc=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function profile(){const t=T[L];return t.Q.map(Q=>Q[1]+" "+Q[2][A[Q[0]]]).join("\n")}
-function facts(l){l.amt=fmt(l.inc);l.lossA=fmt(l.loss);return{n:l.n,outcome:["success by my own definition","did not succeed but landed safely","went past my loss limit"][l.cls],stillInBusinessAtYear10:!!l.biz,closedInYear:l.closed||null,closeReason:{fail:"the business failed",line:"hit my loss limit",hor:"ran out of the time I gave myself"}[l.why]||null,pivotedInYear:l.pv||null,beatOldSalaryInYear:l.beat||null,hardestYear:l.hard,incomeAtYear10:l.amt,moneyLost:l.lossA,wouldDoItAgain:!!l.again,timeline:tl(l,0).replace(/<\/li>/g,"\n").replace(/<[^>]+>/g," ").replace(/[ \t]+/g," ").trim()}}
+function facts(l){l.amt=fmt(l.inc);l.lossA=fmtL(l.loss);return{n:l.n,outcome:["success by my own definition","did not succeed but landed safely","went past my loss limit"][l.cls],stillInBusinessAtYear10:!!l.biz,closedInYear:l.closed||null,closeReason:{fail:"the business failed",line:"hit my loss limit",hor:"ran out of the time I gave myself"}[l.why]||null,pivotedInYear:l.pv||null,beatOldSalaryInYear:l.beat||null,hardestYear:l.hard,incomeAtYear10:l.amt,moneyLost:l.lossA,wouldDoItAgain:!!l.again,timeline:tl(l,0).replace(/<\/li>/g,"\n").replace(/<[^>]+>/g," ").replace(/[ \t]+/g," ").trim()}}
 async function aiCall(body){const r=await fetch(API,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(Object.assign({lang:L,decision:qText||T[L].qv,profile:profile()},body))});if(!r.ok)throw new Error("api "+r.status);return r.json()}
 function aiRow(parent,ph,fn){const w=document.createElement("form");w.className="airow";w.innerHTML=`<input maxlength="200" placeholder="${ph}" aria-label="${ph}"><button class="pill solid">${T[L].aisend}</button>`;
   w.onsubmit=async e=>{e.preventDefault();const i=w.firstChild,b=w.lastChild,q=i.value.trim();if(!q||b.disabled)return;b.disabled=true;b.textContent=T[L].aiwait;try{await fn(q)}finally{b.disabled=false;b.textContent=T[L].aisend}};parent.appendChild(w)}
@@ -668,5 +671,95 @@ async function aiCrowd(q){const t=T[L],P=pool(),S=[];
   catch(e){$("askr").innerHTML=`<div class="find">${t.aioff}</div>`}}
 
 var vhEl=null;function VH(){if(!vhEl){vhEl=document.createElement("div");vhEl.style.cssText="position:fixed;top:0;left:0;width:0;height:100vh;height:100lvh;visibility:hidden;pointer-events:none";document.body.appendChild(vhEl)}return Math.max(innerHeight,vhEl.offsetHeight)}
+
+/* ---------- any decision: plan from live research (Tavily) + Nemotron ---------- */
+var G=null,T0={en:T.en,ko:T.ko};
+Object.assign(T0.en,{pl:["Searching for real data on this decision…","Reading what came back…","Building the questions and the odds…","Almost there…"],plh:"What we found",plgo:"Start the questions",plsrc:"sourced",plasm:"AI assumption",plfail:"We could not build this one. Try wording it as a personal decision, or run the built-in example.",plre:"Rewrite it",plex:"Run the startup example",plstart:"This is the decision our built-in model was made for, so it uses the business survival statistics directly."});
+Object.assign(T0.ko,{pl:["이 고민에 대한 실제 자료를 찾고 있습니다…","찾은 자료를 읽고 있습니다…","질문과 확률을 만들고 있습니다…","거의 다 됐습니다…"],plh:"찾은 근거",plgo:"질문 시작하기",plsrc:"출처 있음",plasm:"AI 가정",plfail:"이 고민으로는 만들지 못했습니다. 개인의 결정으로 다시 적어보거나, 준비된 예시로 진행해 보세요.",plre:"다시 쓰기",plex:"창업 예시로 진행",plstart:"이 고민은 준비된 창업 모델에 딱 맞아서, 사업 생존 통계를 그대로 씁니다."});
+function setG(spec){G=spec||null;T.en=T0.en;T.ko=T0.ko;if(G){T[L]=Object.assign({},T0[L],gT(L,G));A={limit:1,hor:2};G.questions.forEach((Q,i)=>A["g"+i]=Math.min(Q.o.length-1,1))}$("lang").classList.toggle("hide",!!G)}
+function gT(L,S){const V=S.v,ko=L==="ko",t=T0[L],Qk=S.questions.map((Q,i)=>["g"+i,Q.q,Q.o]),alt={},adv={};
+  S.questions.forEach((Q,i)=>{let j=0;Q.risk.forEach((x,k)=>{if(x<Q.risk[j])j=k});alt["g"+i]=ko?`"${Q.q}"의 답이 "${Q.o[j]}"일 때`:`If your answer to "${Q.q}" were "${Q.o[j]}"`;adv["g"+i]=ko?`"${Q.q}"에 "${Q.o[j]}"라고 답할 수 있게 먼저 준비해`:`get to where you can answer "${Q.o[j]}" to "${Q.q}"`});
+  const tag=S.hzSrc>=0?(ko?"출처 기반":"sourced"):(ko?"AI 가정":"AI assumption");
+  const src=S.facts.map(f=>[f.s>=0&&S.sources[f.s]?S.sources[f.s].title:(ko?"AI 가정":"AI assumption"),f.t,f.s>=0&&S.sources[f.s]?S.sources[f.s].url:""]);
+  const a1=(l,A)=>{let bi=-1,bd=0;S.questions.forEach((Q,i)=>{const d=Math.abs(Q.risk[A["g"+i]]-1);if(d>bd){bd=d;bi=i}});const a=[];
+    if(bi>=0&&bd>=.08){const Q=S.questions[bi],up=Q.risk[A["g"+bi]]>1;a.push(ko?`"${Q.q}"에 "${Q.o[A["g"+bi]]}"인 채로 시작한 게 ${up?"발목을 잡았어":"버팀목이 됐어"}.`:`Starting with "${Q.o[A["g"+bi]]}" on "${Q.q}" ${up?"held me back":"carried me"}.`)}
+    else a.push(ko?"출발 조건은 평범했어.":"My starting conditions were ordinary.");
+    if(l.pv)a.push(ko?"흔들릴 때 그만두지 않고 방향을 바꿨어.":"When it wobbled I changed direction instead of stopping.");if(l.why==="hor")a.push(ko?"기한을 정해뒀고, 그걸 지켰어.":"I set a deadline and kept it.");if(l.why==="line")a.push(ko?"멈췄어야 할 지점을 지나서까지 계속했어.":"I kept going past the point where I should have stopped.");return a.join(" ")};
+  return ko?{Q:Qk.concat([["limit","계획보다 얼마나 뒤처지면 그만둘 건가요?",["반년 치","1년 치","2년 치","끝까지 간다"]],["hor","몇 년 해보고 판단할 건가요?",["2년","3년","5년","될 때까지"]]]),alt,adv,src,a1,
+    srcnote:`출처가 있는 수치와 AI가 가정한 수치를 위에 구분해 두었습니다. 연차별 중단 확률은 ${tag}입니다. 질문의 답이 확률을 바꾸는 정도는 모두 AI의 가정입니다.`,
+    liveL:`아직 ${V.doing}`,ih:`10년 차 ${V.metric} (${V.base} 대비)`,posL:x=>`지금 시점에 아직 ${V.doing}인 나들 가운데 <b>상위 ${x}%</b>에 있습니다.`,
+    tgt:(a,b,g,z)=>`${a} 목표: ${V.metric} <b>${b}</b> 이상. 여기에 도달한 인생은 <b>${g}%</b>가 성공했고, 못 미친 인생은 ${z}%였습니다.`,
+    nosucc:y=>`남은 인생 중 성공으로 끝나는 건 없습니다. 무사히 착지한 인생들은 ${y}년 차 무렵에 그만뒀습니다.`,warn:x=>`남은 인생의 <b>${x}%</b>가 한계선을 넘습니다. 지금까지 잃은 것을 확인하세요.`,
+    leg:`금색 선: 내가 기록한 길. 밝은 띠: 최근 기록 기준 예측 (하위 10%~상위 10%). 옅은 띠: 처음 예측. 점선: ${V.base}. 눈금: ${V.base} 대비 ${V.metric} 배수.`,
+    f_run:x=>`남은 인생 중 <b>${x}%</b>가 1년 뒤에도 ${V.doing}입니다.`,f_inc:(a,b,c)=>`1년 뒤 ${V.metric}: 보통 <b>${a}</b>, 범위는 ${b}에서 ${c}.`,f_10:a=>`10년 차 ${V.metric} 중간값: <b>${a}</b>.`,
+    ck1:x=>`${x}, ${V.act}: 어떻게 되고 있나요?`,ck1o:["계획대로 계속 중","방향을 바꿔서 계속 중","그만뒀음"],ck2:`${V.metric}: ${V.base} 대비 어느 정도인가요?`,
+    cite:p=>`이 연차에 ${p}%가 이 길을 그만둡니다 (${tag}).`,citeK:p=>`이 연차에 ${p}%가 이 길을 그만둡니다 (${tag}).`,
+    ev:{quit:a=>`${V.start}. 첫 해 ${V.metric} ${a}.`,grow:a=>`순조로움. ${V.metric} ${a}.`,flat:a=>`제자리걸음. ${V.metric} ${a}.`,pivot:"흔들림. 그만두지 않고 방향을 바꿈.",fail:`${V.act} 중단. ${V.fallback}.`,line:`계획보다 뒤처진 정도가 한계선을 넘음. ${V.fallback}.`,hor:`정한 기한까지 기준에 못 미침. ${V.fallback}.`,job:a=>`${V.fallback}. ${V.metric} ${a}.`},
+    a0:l=>l.cls===0?`응. 10년 차인 지금 ${V.metric}은 ${V.base} 대비 ${l.amt}이고, 원하던 걸 얻었어.`:l.cls===1?`바라던 모습은 못 됐어. 그래도 제때 멈췄고, 뒤처진 건 ${l.lossA}이라 감당할 수 있었어.`:`아니. ${l.lossA}만큼 뒤처졌어. 감당할 수 있다고 정해둔 선을 넘었고, 다시 올라오는 데 몇 년이 걸렸어.`,
+    a2:b=>b?`시작 전에 하나만 해. ${b}. 우리 천 번의 인생에서 확률을 가장 크게 바꾼 게 그거였어.`:"확률을 바꾸는 건 이미 다 했어. 나머지는 운이야. 그걸 알고 시작해.",
+    f2:(p,y)=>`<b>${p}%</b>의 인생이 ${V.metric}에서 "${V.base}" 기준선을 넘었습니다. 넘어서는 시점은 보통 <b>${y}년 차</b>.`,f2z:`${V.metric}에서 "${V.base}" 기준선을 넘은 인생은 거의 없었습니다.`,f1:(n,t,y)=>`${t}개 중 <b>${n}개</b>는 정해둔 한계선보다 많이 뒤처졌습니다. 평균 <b>${y}년 차</b>에.`,
+    f3:a=>`그만둔 경우, 계획보다 뒤처진 정도는 보통 <b>${a}</b>.`,f4:(a,b)=>`${V.base}: 10년 차 ${V.metric} 약 <b>${a}</b>. 이 인생들의 중간값은 <b>${b}</b>.`,
+    rg:Object.assign({},t.rg,{luck:"없음. 운이었다",late:"멈출 때를 놓친 것"}),
+    db:(y,n)=>[[y.n,y.cls===0?"나는 다시 해. 원하던 걸 얻었고, 하루하루를 내가 골랐어.":`나는 다시 해. 그만뒀고 ${y.lossA}만큼 뒤처졌지만, 내가 뭘 할 수 있는지 알게 됐어.`],[n.n,`나는 안 해. ${n.closed}년 차에 그만뒀고 ${n.lossA}만큼 뒤처졌어.`],[y.n,"우리는 같은 자리에서 출발했어. 우리를 가른 건 작은 차이와 운이었고, 그 사실을 꼭 전해줘."]]}
+  :{Q:Qk.concat([["limit","How far behind your own plan before you stop?",["Half a year's worth","One year's worth","Two years' worth","I go to the end"]],["hor","How many years before you judge it?",["2 years","3 years","5 years","Until it works"]]]),alt,adv,src,a1,
+    srcnote:`Sourced numbers and AI assumptions are marked above. The yearly stopping risk is ${tag}. How much each answer shifts the odds is an AI assumption.`,
+    liveL:`Still ${V.doing}`,ih:`${V.metric} in year 10 (vs. "${V.base}")`,posL:x=>`Among the versions of you still ${V.doing} at this point, you are in the <b>top ${x}%</b>.`,
+    tgt:(a,b,g,z)=>`Target for ${a}: ${V.metric} of <b>${b}</b> or more. Lives that reached it succeeded <b>${g}%</b> of the time, against ${z}% for those that did not.`,
+    nosucc:y=>`None of the remaining lives end in success. The ones that landed safely stopped around year ${y}.`,warn:x=>`<b>${x}%</b> of the remaining lives go past your limit. Check how far behind you already are.`,
+    leg:`Gold line: the path you recorded. Bright band: forecast from your latest record (10th to 90th percentile). Faint band: the first forecast. Dashed: ${V.base}. Scale: ${V.metric} as a multiple of "${V.base}".`,
+    f_run:x=>`<b>${x}%</b> of the remaining lives are still ${V.doing} a year from now.`,f_inc:(a,b,c)=>`${V.metric} a year from now: typically <b>${a}</b>, ranging from ${b} to ${c}.`,f_10:a=>`Median ${V.metric} in year 10: <b>${a}</b>.`,
+    ck1:x=>`${x}: how is ${V.act} going?`,ck1o:["Continuing as planned","Continuing in a new direction","Stopped"],ck2:`${V.metric}: how does it compare with "${V.base}"?`,
+    cite:p=>`${p}% leave this path in this year (${tag}).`,citeK:p=>`${p}% leave this path in this year (${tag}).`,
+    ev:{quit:a=>`${V.start}. First-year ${V.metric} ${a}.`,grow:a=>`Going well. ${V.metric} ${a}.`,flat:a=>`Treading water. ${V.metric} ${a}.`,pivot:"It wobbled. Changed direction instead of stopping.",fail:`${V.act} ended. ${V.fallback}.`,line:`Fell further behind than the limit. ${V.fallback}.`,hor:`Below the bar at the deadline. ${V.fallback}.`,job:a=>`${V.fallback}. ${V.metric} ${a}.`},
+    a0:l=>l.cls===0?`Yes. In year 10 my ${V.metric} is ${l.amt} of "${V.base}", and I got what I wanted.`:l.cls===1?`Not what I hoped for. But I stopped in time, and being ${l.lossA} behind was something I could carry.`:`No. I fell ${l.lossA} behind, past the line I said I could bear, and it took years to climb back.`,
+    a2:b=>b?`Do one thing before you start: ${b}. Across our thousand lives that moved the odds the most.`:"You have already done what moves the odds. The rest is luck. Start knowing that.",
+    f2:(p,y)=>`In <b>${p}%</b> of lives ${V.metric} rose above "${V.base}", typically by <b>year ${y}</b>.`,f2z:`Almost no life saw ${V.metric} rise above "${V.base}".`,
+    f3:a=>`Among those who stopped, the typical shortfall was <b>${a}</b>.`,f4:(a,b)=>`"${V.base}": ${V.metric} of about <b>${a}</b> in year 10. The median of these lives is <b>${b}</b>.`,
+    db:(y,n)=>[[y.n,y.cls===0?"I would do it again. I got what I wanted and I chose my own days.":`I would do it again. I stopped and fell ${y.lossA} behind, but I learned what I can do.`],[n.n,`I would not. I stopped in year ${n.closed}, ${n.lossA} behind.`],[y.n,"We started from the same place. Small differences and luck separated us. Tell them that."]]}}
+function simG(a,from){
+  const S=G,r=rng(20261030),g=()=>{let u=0;for(let i=0;i<6;i++)u+=r();return u-3};
+  let pF=1;S.questions.forEach((Q,i)=>{pF*=Q.risk[a["g"+i]]??1});pF=Math.max(.4,Math.min(2.2,pF));
+  const H=S.hazard.map(h=>Math.min(.6,h*pF));if(a===A)haz=H;
+  const inc0=S.start,I=0,plan=y=>Math.min(cap0,inc0*Math.pow(1+Math.max(0,S.growth),y-1)),cap0=S.cap,limit=[.5,1,2,99][a.limit],hor=[2,3,5,99][a.hor],g0=S.growth,vol=S.vol,cap=S.cap;
+  const out=[];base=[];for(let y=0;y<=10;y++)base.push(idx(stay(y),.5));
+  const y0=from?Math.max(1,Math.min(9,Math.round(from.t))):0,fp=from?[[0,inc0]].concat(from.pts):null;
+  const pathV=y=>{let k=0;while(k<fp.length-1&&fp[k+1][0]<y)k++;if(k>=fp.length-1)return fp[fp.length-1][1];const a=fp[k],b=fp[k+1];return a[1]+(b[1]-a[1])*Math.max(0,Math.min(1,(y-a[0])/Math.max(.01,b[0]-a[0])))};
+  for(let i=0;i<1000;i++){
+    const l={n:i+1,pv:0,willPiv:r()<.5,closed:0,why:"",line:0,beat:0,hard:1,ev:[],p:[base[0]],iy:[1],loss:I};
+    let inc=inc0,sat=.6,biz=true,worst=9;
+    if(from){for(let y=1;y<=y0;y++){const v=pathV(y);l.iy.push(v);l.p.push(idx(v,.6));if(!l.beat&&v>=stay(y))l.beat=y}inc=Math.max(.1,from.inc*(1+g()*.08));l.iy[y0]=inc;if(from.pv)l.pv=y0;l.loss=Math.max(0,(inc0+plan(Math.max(1,y0)))/2-(inc0+from.inc)/2)*from.t}
+    for(let y=y0+1;y<=10;y++){
+      if(biz){
+        const p=H[y-1];let why="";
+        if(r()<p){if(l.willPiv&&!l.pv&&r()<.55){l.pv=y;inc*=.85;l.ev.push([y,"pivot"])}else why="fail"}
+        else if(y>1){const gr=g0+g()*vol;inc=Math.min(cap,Math.max(.1,inc*(1+gr)));l.ev.push([y,gr>.05?"grow":"flat",inc])}
+        else{inc=Math.max(.1,inc*(1+g()*.15));l.ev.push([1,"quit",inc])}
+        if(!why){const b=stay(y),pl=plan(y);l.loss+=Math.max(0,pl-inc);l.loss=Math.max(0,l.loss-Math.max(0,inc-pl)*.5);
+          if(l.loss>limit)why="line";else if(y>=hor&&inc<Math.min(b,pl)*.7)why="hor";
+          if(!l.beat&&inc>=b)l.beat=y;if(inc-b<worst){worst=inc-b;l.hard=y}}
+        if(why){biz=false;l.closed=y;l.hard=y;l.why=why;if(l.loss>limit)l.line=y;l.ev.push([y,why,0,Math.round(H[y-1]*1000)/10]);inc=S.fallback*stay(y);sat=.4}
+        else sat=Math.max(.2,Math.min(.95,.55+Math.min(inc,2.5)*.14-(inc<stay(y)*.8?.1:0)+g()*.05));
+      }else{inc*=1.03+g()*.015;sat=Math.min(.58,sat+.025);if(y===10)l.ev.push([y,"job",inc])}
+      l.p.push(idx(inc,sat)+g()*.01);l.iy.push(inc);
+    }
+    l.inc=inc;l.biz=biz;l.cls=l.line?2:(biz&&inc>=stay(10)*.95)?0:1;
+    l.again=r()<[.93,.5,.14][l.cls];
+    const f1=r(),f2=r();l.ct=l.closed?Math.max(from?from.t+.05:0,l.closed-1+f1):99;l.pt=l.pv?l.pv-1+f2:99;
+    l.reg=l.cls===0?(l.beat&&l.beat<=3?"none":"sooner"):l.why==="line"?"late":"luck";
+    out.push(l);
+  }
+  return out;
+}
+async function plan(){const t=T[L],o=$("opts");let k=0;$("ivnote").textContent="";$("qq").textContent=t.pl[0];o.innerHTML=`<div class="lead">${esc(qText)}</div>`;
+  const tm=setInterval(()=>{k=Math.min(t.pl.length-1,k+1);if(step===0)$("qq").textContent=t.pl[k]},4500);
+  const fail=()=>{$("qq").textContent=t.plfail;o.innerHTML="";const a=document.createElement("button");a.className="pill solid go";a.textContent=t.plre;a.onclick=()=>ask();o.appendChild(a);const b=document.createElement("button");b.className="pill";b.style.marginTop="4px";b.textContent=t.plex;b.onclick=()=>{setG(null);step=1;ask()};o.appendChild(b)};
+  let r;try{r=await aiCall({kind:"plan",q:qText})}catch(e){clearInterval(tm);if(step===0)fail();return}
+  clearInterval(tm);if(step!==0)return;
+  const go=()=>{const b=document.createElement("button");b.className="pill solid go";b.style.marginTop="14px";b.textContent=T[L].plgo;b.onclick=()=>{step=1;burst(7);ask()};o.appendChild(b)};
+  if(r.startup){setG(null);$("qq").textContent=t.plh;o.innerHTML=`<div class="find">${t.plstart}</div>`;go();return}
+  if(!r.ok||!r.spec){fail();return}
+  setG(r.spec);paint_src();$("qq").textContent=T[L].plh;{const n=T[L].Q.length;$("pn").textContent="01 / "+String(n+1).padStart(2,"0");$("pb").style.width=(100/(n+1))+"%"}
+  o.innerHTML=G.facts.map(f=>`<div class="find">${esc(f.t)} <em class="aitag" style="display:inline;margin-left:6px">${f.s>=0&&G.sources[f.s]?T[L].plsrc+": "+esc(G.sources[f.s].title):T[L].plasm}</em></div>`).join("");go()}
+function paint_src(){const t=T[L];$("src").innerHTML=t.src.map(s=>`<div class="find"><b>${esc(s[0])}</b><br>${esc(s[1])} ${s[2]?`<a href="${esc(s[2])}" target="_blank" rel="noopener">↗</a>`:""}</div>`).join("")+`<div class="find">${t.srcnote}</div>`;document.querySelectorAll("[data-t]").forEach(e=>{const v=t[e.dataset.t];if(typeof v==="string")e.innerHTML=v})}
 
 </script></body></html>
