@@ -500,7 +500,7 @@ function summary(){
   const f=[],ln=P.filter(l=>l.line),bt=P.filter(l=>l.beat),cl=P.filter(l=>l.closed);
   f.push(ln.length?t.f1(ln.length,L==="ko"?P.length:P.length.toLocaleString(),(ln.reduce((s,l)=>s+l.line,0)/ln.length).toFixed(1)):t.f1z);
   f.push(bt.length>=Math.max(3,P.length*.02)?t.f2(Math.round(100*bt.length/P.length),med(bt.map(l=>l.beat))):t.f2z);
-  if(cl.length>=5)f.push(t.f3(fmtL(med(cl.map(l=>l.loss)))));
+  if(cl.length>=5&&med(cl.map(l=>l.loss))>=.05)f.push(t.f3(fmtL(med(cl.map(l=>l.loss)))));
   const inc=P.map(l=>l.inc);f.push(t.f4(fmt(stay(10)),fmt(med(inc))));
   $("facts").innerHTML=f.map(x=>`<div class="find">${x}</div>`).join("");
   $("nums").innerHTML=[.1,.5,.9].map((p,k)=>`<div><b>${fmt(q(inc,p))}</b><span>${t.p[k]}</span></div>`).join("");
@@ -530,7 +530,7 @@ function askUI(){
   $("askr").innerHTML=mode==="cls"?"":gdef.map(g=>`<div class="find"><b>${g.count}</b> ${g.label}</div>`).join("");
   aiRow(o,t.aiq2,q=>aiCrowd(q));
   const d=$("debate");
-  if(mode==="ai"&&aiG){d.innerHTML=`<h2>${esc(aiG.q)}</h2>`+aiG.voices.map(x=>`<div class="say"><i>#${x.n}</i><span>${esc(x.say)}</span></div>`).join("")+(aiG.takeaway?`<div class="find"><b>${esc(aiG.takeaway)}</b></div>`:"")+`<p class="note" style="margin-top:10px">${t.ainote(aiG.voices.length)}</p>`}
+  if(mode==="ai"&&aiG){d.innerHTML=`<h2>${esc(aiG.q)}</h2>`+aiG.voices.map(x=>`<div class="say"><i>#${x.n}</i><span>${esc(x.say)}</span></div>`).join("")+(aiG.takeaway?`<div class="find"><b>${esc(aiG.takeaway)}</b></div>`:"")+`<p class="note" style="margin-top:10px">${t.ainote(aiG.cnt||aiG.voices.length)}</p>`}
   else if(mode==="again"){const P=pool(),y=P.find(l=>l.again&&l.cls===0)||P.find(l=>l.again),n=P.find(l=>!l.again&&l.closed);
     if(y&&n){[y,n].forEach(l=>{l.amt=fmt(l.inc);l.lossA=fmtL(l.loss)});
       d.innerHTML=`<h2>${t.dbh}</h2>`+t.db(y,n,A).map(x=>`<div class="say"><i>#${x[0]}</i><span>${x[1]}</span></div>`).join("")+`<p class="note" style="margin-top:10px">${t.dbnote}</p>`}else d.innerHTML=""}
@@ -666,7 +666,7 @@ async function aiCrowd(q){const t=T[L],P=pool(),S=[];
     let opts=(r.options||[]).slice(0,3),ans=(r.answers||[]).filter(x=>S.some(l=>l.n===x.n)&&x.option>=0&&x.option<opts.length);{const used=opts.map((x,k)=>ans.some(a=>a.option===k)),ix=[];let c=0;used.forEach((u,k)=>ix[k]=u?c++:-1);opts=opts.filter((x,k)=>used[k]);ans.forEach(a=>a.option=ix[a.option])}if(opts.length<2||!ans.length)throw new Error("shape");
     const byN={};ans.forEach(x=>byN[x.n]=x);const SS=S.filter(l=>byN[l.n]),map={};
     P.forEach(l=>{let bd=1e9,bo=0;SS.forEach(s=>{const d=(s.cls===l.cls?0:50)+Math.abs((s.closed||11)-(l.closed||11))+Math.abs(s.inc-l.inc)*2;if(d<bd){bd=d;bo=byN[s.n].option}});map[l.n]=bo});
-    aiG={q,defs:opts.map((x,k)=>({label:String(x).slice(0,24),a:[1,.65,.4][k],c:k?0:"#f4c66a"})),map,voices:ans.slice(0,6).map(x=>({n:x.n,say:String(x.say||"")})),takeaway:r.takeaway||""};
+    aiG={q,defs:opts.map((x,k)=>({label:String(x).slice(0,24),a:[1,.65,.4][k],c:k?0:"#f4c66a"})),map,voices:ans.slice(0,6).map(x=>({n:x.n,say:String(x.say||"")})),takeaway:r.takeaway||"",cnt:ans.length};
     mode="ai";burst(16);applyMode();askUI();$("stage").scrollIntoView({behavior:"smooth",block:"start"})}
   catch(e){$("askr").innerHTML=`<div class="find">${t.aioff}</div>`}}
 
