@@ -35,7 +35,7 @@ async function tavily(query) {
   try {
     const r = await fetch("https://api.tavily.com/search", { method: "POST",
       headers: { "content-type": "application/json", authorization: "Bearer " + process.env.TAVILY_API_KEY },
-      body: JSON.stringify({ query: clip(query, 300), max_results: 5, search_depth: "advanced", exclude_domains: ["namu.wiki", "reddit.com", "quora.com", "dcinside.com", "fmkorea.com", "blog.naver.com", "cafe.naver.com", "youtube.com", "tistory.com", "workingus.com", "gohackers.com", "theqoo.net", "clien.net"] }) });
+      body: JSON.stringify({ query: clip(query, 300), max_results: 5, search_depth: "advanced", exclude_domains: ["namu.wiki", "reddit.com", "quora.com", "dcinside.com", "fmkorea.com", "blog.naver.com", "cafe.naver.com", "youtube.com", "tistory.com", "workingus.com", "gohackers.com", "theqoo.net", "clien.net", "instagram.com", "facebook.com", "threads.net", "x.com", "tiktok.com", "ohou.se", "pinterest.com"] }) });
     if (!r.ok) return [];
     const d = await r.json();
     return (d.results || []).map(x => ({ title: clip(x.title, 120), url: clip(x.url, 400), content: clip(x.content, 900) }));
@@ -100,12 +100,12 @@ Return ONLY JSON with this shape:
  "start":number,"growth":number,"vol":number,"cap":number,"fallback":number,"cost":number,
  "facts":[{"t":"one sentence stating a number used","s":source index or -1,"quote":"the exact words copied from that source that contain the number"}]}
 Rules:
-- type "startup" only when the decision is about leaving a job to start a business or go freelance. Then return {"type":"startup"} and nothing else.
+- type "startup" only when the person would found and run their own business or go freelance. Changing employers, including joining a startup as an employee, is type "other". Then return {"type":"startup"} and nothing else.
 - type "invalid" when the text is not a personal life decision. Then return {"type":"invalid"}.
 - Exactly 7 questions, 3 options each, using exactly the keys "q", "o" and "risk" as in the shape above. Questions end politely (in Korean: ~인가요? or ~있나요?). risk is the multiplier on the yearly chance of stopping for each option (0.6 to 1.6; higher is riskier).
 - hazard: chance in each of years 1 to 10 that the person stops or the new path ends that year (0.01 to 0.4). Use the sources when they give rates.
 - The metric is an index where 1.0 means "the same as if I had not done it". start: index in year 1. growth: average yearly growth of the index while continuing. vol: yearly volatility. cap: maximum index. fallback: index after stopping. cost: upfront cost measured in years of the baseline.
-- facts: 3 to 5 sentences. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text, at most 80 characters, and must not contain double quote characters. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
+- facts: 3 to 5 sentences. Every fact must bear directly on how this decision turns out; drop numbers about unrelated topics even if a source contains them. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text, at most 80 characters, and must not contain double quote characters. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
 - Korean example of v for studying abroad: {"act":"유학","doing":"유학 중","start":"출국","fallback":"귀국 후 취업","base":"가지 않았다면","metric":"소득"}` },
         { role: "user", content: `Decision: ${q}\n\nSearch results (index, title, text):\n${sources.map((x, i) => `[${i}] ${x.title}\n${x.content}`).join("\n\n") || "(no search results)"}` },
       ];
