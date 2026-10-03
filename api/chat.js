@@ -90,7 +90,7 @@ Include every life exactly once in answers.` },
         tavily(q + (ko ? " 장기 결과 연구 소득 만족도" : " long-term outcomes study income satisfaction")),
       ]);
       const seen = new Set(), sources = [...s1, ...s2].filter(x => x.url && !seen.has(x.url) && seen.add(x.url)).slice(0, 8);
-      const out = await complete([
+      const msgs = [
         { role: "system", content: `You design a 10-year simulation of one personal decision for "A Thousand Lives". The person either takes a new path or stays as they are. Write all text in ${lang}${ko ? " (questions and labels in polite 존댓말)" : ""}.
 Return ONLY JSON with this shape:
 {"type":"startup"|"other"|"invalid",
@@ -105,22 +105,27 @@ Rules:
 - Exactly 7 questions, 3 options each. risk is the multiplier on the yearly chance of stopping for each option (0.6 to 1.6; higher is riskier).
 - hazard: chance in each of years 1 to 10 that the person stops or the new path ends that year (0.01 to 0.4). Use the sources when they give rates.
 - The metric is an index where 1.0 means "the same as if I had not done it". start: index in year 1. growth: average yearly growth of the index while continuing. vol: yearly volatility. cap: maximum index. fallback: index after stopping. cost: upfront cost measured in years of the baseline.
-- facts: 3 to 5 sentences. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
+- facts: 3 to 5 sentences. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text, at most 80 characters, and must not contain double quote characters. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
 - Korean example of v for studying abroad: {"act":"유학","doing":"유학 중","start":"출국","fallback":"귀국 후 취업","base":"가지 않았다면","metric":"소득"}` },
         { role: "user", content: `Decision: ${q}\n\nSearch results (index, title, text):\n${sources.map((x, i) => `[${i}] ${x.title}\n${x.content}`).join("\n\n") || "(no search results)"}` },
-      ], { json: true, max: 4500, temp: 0.3 });
+      ];
+      let j = null, out, perr = "";
+      for (let a = 0; a < 2 && !j; a++) {
+      out = await complete(msgs, { json: true, max: 5000, temp: a ? 0.6 : 0.3 });
       let txt = out.text;
       if (ko && /[\u3040-\u30ff\u00c0-\u024f\u0400-\u04ff]/.test(txt)) txt = txt.replace(/[\u3040-\u30ff\u00c0-\u024f\u0400-\u04ff]+/g, "");
-      const m = txt.match(/\{[\s\S]*\}/); const j = JSON.parse(m ? m[0] : txt);
+      const m = txt.match(/\{[\s\S]*\}/); try { j = JSON.parse(m ? m[0] : txt); } catch (e) { perr = clip(e.message, 80) + " | " + clip(txt, 60); }
+      }
+      if (!j) return res.status(200).json({ ok: false, why: "json: " + perr });
       if (j.type === "startup") return res.status(200).json({ startup: true });
       const num = (x, lo, hi, d) => { x = Number(x); return Number.isFinite(x) ? Math.max(lo, Math.min(hi, x)) : d; };
       const si = x => { x = Number(x); return Number.isInteger(x) && x >= 0 && x < sources.length ? x : -1; };
       const qs = (Array.isArray(j.questions) ? j.questions : []).filter(x => x && x.q && Array.isArray(x.o) && x.o.length >= 2).slice(0, 8)
         .map(x => { const o = x.o.slice(0, 4).map(y => clip(y, 40)); return { q: clip(x.q, 90), o, risk: o.map((_, k) => num((x.risk || [])[k], 0.5, 1.8, 1)) }; });
       const hz = Array.isArray(j.hazard) ? j.hazard : [];
-      if (j.type === "invalid" || qs.length < 4 || hz.length < 5 || !j.v) return res.status(200).json({ ok: false });
+      if (j.type === "invalid" || qs.length < 4 || hz.length < 5 || !j.v) return res.status(200).json({ ok: false, why: `type=${j.type} qs=${qs.length} hz=${hz.length} v=${!!j.v} rawq=${Array.isArray(j.questions) ? j.questions.length : typeof j.questions}` });
       const v = {}; for (const k of ["act", "doing", "start", "fallback", "base", "metric"]) v[k] = clip(j.v[k] || "", 30);
-      if (!v.act || !v.doing || !v.base || !v.metric) return res.status(200).json({ ok: false });
+      if (!v.act || !v.doing || !v.base || !v.metric) return res.status(200).json({ ok: false, why: "v " + JSON.stringify(v) });
       const norm = x => String(x || "").replace(/[\s"'“”‘’.,·]/g, "").toLowerCase();
       const backed = (s, quote) => { const n = norm(quote); return s >= 0 && n.length >= 6 && norm(sources[s].content).includes(n); };
       const facts = (Array.isArray(j.facts) ? j.facts : []).filter(f => f && f.t).slice(0, 5).map(f => { const s = si(f.s); return { t: clip(f.t, 220), s: backed(s, f.quote) ? s : -1 }; });
