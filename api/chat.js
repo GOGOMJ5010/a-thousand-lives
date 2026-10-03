@@ -93,7 +93,7 @@ Include every life exactly once in answers.` },
       const msgs = [
         { role: "system", content: `You design a 10-year simulation of one personal decision for "A Thousand Lives". The person either takes a new path or stays as they are. Write all text in ${lang}${ko ? " (questions and labels in polite 존댓말)" : ""}.
 Return ONLY JSON with this shape:
-{"type":"startup"|"other"|"invalid",
+{"type":"startup"|"other"|"invalid"|"unsupported",
  "v":{"act":"short noun for the new path","doing":"short phrase meaning still on the new path","start":"short noun for the starting event","fallback":"short phrase for what happens after stopping","base":"short phrase meaning: if I had not done it","metric":"what is measured, such as income or life satisfaction"},
  "questions":[{"q":"question about this person's situation that changes the odds","o":["option","option","option"],"risk":[1.3,1.0,0.75]}],
  "hazard":[ten numbers],"hzSrc":source index or -1,
@@ -102,6 +102,8 @@ Return ONLY JSON with this shape:
 Rules:
 - type "startup" only when the person would found and run their own business or go freelance. Changing employers, including joining a startup as an employee, is type "other". Then return {"type":"startup"} and nothing else.
 - type "invalid" when the text is not a personal life decision. Then return {"type":"invalid"}.
+- type "unsupported" when the path cannot be stopped or undone once taken (for example having a child or a medical procedure), or when the text is about self-harm or a medical or legal emergency. Then return {"type":"unsupported"}.
+- Moving to the countryside to farm is type "other", not "startup".
 - Exactly 7 questions, 3 options each, using exactly the keys "q", "o" and "risk" as in the shape above. Questions end politely (in Korean: ~인가요? or ~있나요?). risk is the multiplier on the yearly chance of stopping for each option (0.6 to 1.6; higher is riskier).
 - hazard: chance in each of years 1 to 10 that the person stops or the new path ends that year (0.01 to 0.4). Use the sources when they give rates.
 - The metric is an index where 1.0 means "the same as if I had not done it". start: index in year 1. growth: average yearly growth of the index while continuing. vol: yearly volatility. cap: maximum index. fallback: index after stopping. cost: upfront cost measured in years of the baseline.
@@ -118,6 +120,7 @@ Rules:
       }
       if (!j) return res.status(200).json({ ok: false, why: "json: " + perr });
       if (j.type === "startup") return res.status(200).json({ startup: true });
+      if (j.type === "unsupported") return res.status(200).json({ ok: false, why: "unsupported" });
       const num = (x, lo, hi, d) => { x = Number(x); return Number.isFinite(x) ? Math.max(lo, Math.min(hi, x)) : d; };
       const si = x => { x = Number(x); return Number.isInteger(x) && x >= 0 && x < sources.length ? x : -1; };
       const qs = (Array.isArray(j.questions) ? j.questions : []).map(x => x && ({ q: x.q || x.question || x.text, o: x.o || x.options || x.choices || x.answers, risk: x.risk || x.risks || x.multipliers })).filter(x => x && x.q && Array.isArray(x.o) && x.o.length >= 2).slice(0, 7)
