@@ -13,13 +13,13 @@ function limited(ip) {
 const clip = (x, n) => String(x == null ? "" : x).slice(0, n);
 const strip = s => String(s || "").replace(/<think>[\s\S]*?<\/think>/g, "").trim();
 
-async function complete(messages, { json = false, max = 500 } = {}) {
+async function complete(messages, { json = false, max = 500, temp = 0.7 } = {}) {
   let last;
   for (const model of [MODEL, FALLBACK]) {
     const r = await fetch(BASE + "chat/completions", {
       method: "POST",
       headers: { "content-type": "application/json", authorization: "Bearer " + process.env.NEBIUS_API_KEY },
-      body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: max, ...(json ? { response_format: { type: "json_object" } } : {}) }),
+      body: JSON.stringify({ model, messages, temperature: temp, max_tokens: max, ...(json ? { response_format: { type: "json_object" } } : {}) }),
     });
     if (r.ok) { const d = await r.json(); let text = strip(d.choices?.[0]?.message?.content);
       if (!json && d.choices?.[0]?.finish_reason === "length") { const k = Math.max(text.lastIndexOf("."), text.lastIndexOf("?"), text.lastIndexOf("!")); if (k > 20) text = text.slice(0, k + 1); }
@@ -35,10 +35,10 @@ async function tavily(query) {
   try {
     const r = await fetch("https://api.tavily.com/search", { method: "POST",
       headers: { "content-type": "application/json", authorization: "Bearer " + process.env.TAVILY_API_KEY },
-      body: JSON.stringify({ query: clip(query, 300), max_results: 5, search_depth: "basic" }) });
+      body: JSON.stringify({ query: clip(query, 300), max_results: 5, search_depth: "advanced", exclude_domains: ["namu.wiki", "reddit.com", "quora.com", "dcinside.com", "fmkorea.com", "blog.naver.com", "cafe.naver.com", "youtube.com", "tistory.com", "workingus.com", "gohackers.com", "theqoo.net", "clien.net"] }) });
     if (!r.ok) return [];
     const d = await r.json();
-    return (d.results || []).map(x => ({ title: clip(x.title, 120), url: clip(x.url, 400), content: clip(x.content, 700) }));
+    return (d.results || []).map(x => ({ title: clip(x.title, 120), url: clip(x.url, 400), content: clip(x.content, 900) }));
   } catch (e) { return []; }
 }
 
@@ -86,8 +86,8 @@ Include every life exactly once in answers.` },
     if (b.kind === "plan") {
       const ko = b.lang === "ko", lang = ko ? "Korean" : "English";
       const [s1, s2] = await Promise.all([
-        tavily(q + (ko ? " 통계 비율 성공률 실패율" : " statistics success rate failure rate data")),
-        tavily(q + (ko ? " 후회 만족도 장기 결과 조사" : " regret satisfaction long-term outcomes survey")),
+        tavily(q + (ko ? " 통계 조사 보고서 비율" : " statistics report survey rate")),
+        tavily(q + (ko ? " 장기 결과 연구 소득 만족도" : " long-term outcomes study income satisfaction")),
       ]);
       const seen = new Set(), sources = [...s1, ...s2].filter(x => x.url && !seen.has(x.url) && seen.add(x.url)).slice(0, 8);
       const out = await complete([
@@ -98,18 +98,20 @@ Return ONLY JSON with this shape:
  "questions":[{"q":"question about this person's situation that changes the odds","o":["option","option","option"],"risk":[1.3,1.0,0.75]}],
  "hazard":[ten numbers],"hzSrc":source index or -1,
  "start":number,"growth":number,"vol":number,"cap":number,"fallback":number,"cost":number,
- "facts":[{"t":"one sentence stating a number used","s":source index or -1}]}
+ "facts":[{"t":"one sentence stating a number used","s":source index or -1,"quote":"the exact words copied from that source that contain the number"}]}
 Rules:
 - type "startup" only when the decision is about leaving a job to start a business or go freelance. Then return {"type":"startup"} and nothing else.
 - type "invalid" when the text is not a personal life decision. Then return {"type":"invalid"}.
 - Exactly 7 questions, 3 options each. risk is the multiplier on the yearly chance of stopping for each option (0.6 to 1.6; higher is riskier).
 - hazard: chance in each of years 1 to 10 that the person stops or the new path ends that year (0.01 to 0.4). Use the sources when they give rates.
 - The metric is an index where 1.0 means "the same as if I had not done it". start: index in year 1. growth: average yearly growth of the index while continuing. vol: yearly volatility. cap: maximum index. fallback: index after stopping. cost: upfront cost measured in years of the baseline.
-- facts: 3 to 5 sentences. Each must be supported by the source whose index you give in "s". If a number is your own estimate, set "s" to -1 and say it is an assumption. Never attribute an invented number to a source.
+- facts: 3 to 5 sentences. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
 - Korean example of v for studying abroad: {"act":"유학","doing":"유학 중","start":"출국","fallback":"귀국 후 취업","base":"가지 않았다면","metric":"소득"}` },
         { role: "user", content: `Decision: ${q}\n\nSearch results (index, title, text):\n${sources.map((x, i) => `[${i}] ${x.title}\n${x.content}`).join("\n\n") || "(no search results)"}` },
-      ], { json: true, max: 4500 });
-      const m = out.text.match(/\{[\s\S]*\}/); const j = JSON.parse(m ? m[0] : out.text);
+      ], { json: true, max: 4500, temp: 0.3 });
+      let txt = out.text;
+      if (ko && /[\u3040-\u30ff\u00c0-\u024f\u0400-\u04ff]/.test(txt)) txt = txt.replace(/[\u3040-\u30ff\u00c0-\u024f\u0400-\u04ff]+/g, "");
+      const m = txt.match(/\{[\s\S]*\}/); const j = JSON.parse(m ? m[0] : txt);
       if (j.type === "startup") return res.status(200).json({ startup: true });
       const num = (x, lo, hi, d) => { x = Number(x); return Number.isFinite(x) ? Math.max(lo, Math.min(hi, x)) : d; };
       const si = x => { x = Number(x); return Number.isInteger(x) && x >= 0 && x < sources.length ? x : -1; };
@@ -119,7 +121,10 @@ Rules:
       if (j.type === "invalid" || qs.length < 4 || hz.length < 5 || !j.v) return res.status(200).json({ ok: false });
       const v = {}; for (const k of ["act", "doing", "start", "fallback", "base", "metric"]) v[k] = clip(j.v[k] || "", 30);
       if (!v.act || !v.doing || !v.base || !v.metric) return res.status(200).json({ ok: false });
-      const facts = (Array.isArray(j.facts) ? j.facts : []).filter(f => f && f.t).slice(0, 5).map(f => ({ t: clip(f.t, 220), s: si(f.s) }));
+      const norm = x => String(x || "").replace(/[\s"'“”‘’.,·]/g, "").toLowerCase();
+      const backed = (s, quote) => { const n = norm(quote); return s >= 0 && n.length >= 6 && norm(sources[s].content).includes(n); };
+      const facts = (Array.isArray(j.facts) ? j.facts : []).filter(f => f && f.t).slice(0, 5).map(f => { const s = si(f.s); return { t: clip(f.t, 220), s: backed(s, f.quote) ? s : -1 }; });
+      if (!facts.some(f => f.s === si(j.hzSrc))) j.hzSrc = -1;
       const used = [...new Set(facts.map(f => f.s).concat([si(j.hzSrc)]).filter(x => x >= 0))], remap = {}; used.forEach((x, k) => remap[x] = k);
       const spec = { v, questions: qs, hazard: Array.from({ length: 10 }, (_, k) => num(hz[Math.min(k, hz.length - 1)], 0.005, 0.5, 0.08)), hzSrc: si(j.hzSrc) >= 0 ? remap[si(j.hzSrc)] : -1,
         start: num(j.start, 0.2, 1.5, 0.8), growth: num(j.growth, -0.05, 0.4, 0.08), vol: num(j.vol, 0.05, 0.4, 0.15), cap: num(j.cap, 1, 6, 3), fallback: num(j.fallback, 0.3, 1.2, 0.9), cost: num(j.cost, 0, 3, 0.3),
