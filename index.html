@@ -188,7 +188,7 @@ h1 em{font-family:"Instrument Serif","Nanum Myeongjo",serif;font-style:italic;fo
 <script>
 const T={
 en:{lang:"한국어",h1:"You live once.<br><span>AI can live your life a thousand times.</span>",sub:"Tell it the decision you can't make. It lives the next ten years 1,000 times. Then, as you live the real one, the thousand narrow back to one.",begin:"Begin",st:[["You live","once."],["AI can live your life",""],["AI can live your life","a thousand times."]],top:["Half of new businesses close within five years.","You cannot know which half you are by living once."],cards:[["Answer","17 questions about you, the plan, your safety net, and what success means to you."],["Live","Ten years, a thousand times, on real survival statistics."],["Meet","Pick any one of them and ask how it went."],["Return","Record where you are. The future is recalculated from there."]],scroll:"Scroll",resume:n=>`Continue (${n} lives left)`,
-q0:"What decision can't you make?",qv:"Should I quit my job and start my own business?",next:"Next",ex:"Skip with example answers",ivnote:"For now the simulation covers one decision: leaving a job to start a business.",
+q0:"What decision can't you make?",qv:"Should I quit my job and start my own business?",next:"Next",ex:"Skip with example answers",ivnote:"",
 yearL:"Year",liveL:"Still running",again:"Start over",hint:"Tap any dot to meet that version of you",
 c1:"succeeded by your own definition",c2:"did not succeed, landed safely",c3:"lost more than your limit",k:["Success","Soft landing","Past the limit"],
 dh2:"One of your lives",nh:"What happened across the thousand",ih:"Your income in year ten",fh:"What changes the odds",
@@ -221,7 +221,7 @@ cfl:(a,s0,s1,l0,l1)=>`If you ${a}: success <b>${s0}% → ${s1}%</b>, past the li
 alt:{cust:"get paying customers before you quit",run:"build a longer savings runway first",exp:"spend time working in that business first",inv:"put less money in at the start",hor:"give it more time",back:"keep a way back to a job open",other:"have a second household income"},
 Q:[["age","How old are you?",["20s","30s","40s","50s or older"]],["inc","What do you earn a year now?",["Under $30k","$30–50k","$50–80k","$80–120k","Over $120k"]],["dep","How many people depend on your income?",["Just me","1–2 others","3 or more"]],["spend","How much of your income goes to fixed costs?",["Under half","About 70%","Almost all of it"]],["car","How long have you worked in your field?",["Under 3 years","3–10 years","Over 10 years"]],["ind","What kind of business?",["Online or software","Shop or retail","Freelance or consulting","Making a product","Something else"]],["inv","How much will you put in at the start?",["Almost nothing","About 6 months of income","About a year of income","Two years or more"]],["team","Alone or with a partner?",["Alone","With a partner"]],["exp","Experience in that business?",["None","Some","It is what I already do"]],["cust","Do you have paying customers yet?",["Not yet","A few","Steady revenue"]],["run","How long can your savings cover you?",["3 months","6 months","12 months","18 months or more"]],["debt","Do you carry debt?",["None","Some","A lot"]],["other","Is there another income at home?",["No","Yes"]],["back","If it fails, can you go back to a job?",["Easily","Probably","It would be hard"]],["goal","What counts as success for you?",["Earning more than now","Owning my time","Doing work I want to do"]],["limit","How much can you lose before it is over?",["6 months of income","A year of income","Two years of income","Whatever it takes"]],["hor","How long will you give it?",["2 years","3 years","5 years","Until it works"]]]},
 ko:{lang:"English",h1:"사람은 한 번 삽니다.<br><span>AI는 당신의 인생을 천 번 살아봅니다.</span>",sub:"결정하지 못한 고민을 적어주세요. 앞으로의 10년을 천 번 살아봅니다. 그리고 당신이 실제로 살아가는 동안, 천 개는 다시 하나로 줄어듭니다.",begin:"시작하기",st:[["사람은","한 번 삽니다."],["AI는 당신의 인생을",""],["AI는 당신의 인생을","천 번 살아봅니다."]],top:["한국 신생기업 셋 중 둘은 5년 안에 문을 닫습니다.","어느 쪽이 내 이야기일지는 한 번 살아서는 알 수 없습니다."],cards:[["묻기","나, 계획, 안전망, 내가 정한 성공의 기준. 질문 17개."],["살아보기","실제 생존 통계 위에서 10년을 천 번."],["만나기","그중 아무나 골라 어떻게 됐는지 묻습니다."],["돌아오기","지금 상태를 기록하면 앞날을 다시 계산합니다."]],scroll:"아래로 스크롤",resume:n=>`이어서 하기 (${n}개 남음)`,
-q0:"결정하지 못한 고민이 무엇인가요?",qv:"회사를 그만두고 내 일을 시작할까?",next:"다음",ex:"예시 답변으로 건너뛰기",ivnote:"지금은 퇴사 후 창업 고민만 시뮬레이션합니다.",
+q0:"결정하지 못한 고민이 무엇인가요?",qv:"회사를 그만두고 내 일을 시작할까?",next:"다음",ex:"예시 답변으로 건너뛰기",ivnote:"",
 yearL:"연차",liveL:"아직 사업 중",again:"처음으로",hint:"점을 누르면 그 인생을 산 나를 만납니다",
 c1:"내 기준으로 성공",c2:"성공은 못 했지만 무사히 착지",c3:"정해둔 한계선을 넘음",k:["성공","무사 착지","한계선 넘음"],
 dh2:"천 개 중 하나의 인생",nh:"천 번의 인생에서 일어난 일",ih:"10년 차의 내 수입",fh:"무엇이 확률을 바꾸는가",
@@ -279,7 +279,7 @@ $("lang").onclick=()=>{L=L==="en"?"ko":"en";if(lives.length&&(phase==="end"||pha
 function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 const BLS=[.204,.134,.109,.099,.085,.077,.084,.068,.058,.077],CAL=1.25;
 const idx=(inc,sat)=>Math.max(.03,Math.min(.97,.5*Math.min(inc,3)/3+.5*sat));
-const stay=y=>Math.pow(1.03,y);
+const stay=y=>typeof G!=="undefined"&&G&&G.mode==="commit"?1:Math.pow(1.03,y);
 function hazards(a){const m=[1.166,.826,1.11,.784,1][a.ind];return BLS.map((h,i)=>{let s=1-h;if(L==="ko")s=i===0?.644:Math.pow(s,1.262);return 1-Math.pow(s,m)})}
 function sim(a,from){return G?simG(a,from):simS(a,from)}
 function simS(a,from){
@@ -402,9 +402,13 @@ function frame(now){
 }
 
 function toDust(){for(let i=0;i<N;i++){tx[i]=(R()-.5)*W*1.3;ty[i]=(R()-.5)*H*1.1;tz[i]=(R()-.5)*500;ta[i]=.06+R()*.22}}
-const ST=$("st"),sc2=ST.getContext("2d"),FR=[],NF=92;let sp=0,sLast=-1,sStage=-1,sR=null;
-for(let i=0;i<NF;i++){const im=new Image();im.onload=()=>{im.ok=1;if(i===0||i===sLast)drawStory(true)};im.src="g/"+String(i+1).padStart(3,"0")+".jpg";FR.push(im)}
-const HI=new Image();HI.onload=()=>{HI.ok=1;drawStory(true)};HI.src='g/hi.jpg';
+const ST=$("st"),sc2=ST.getContext("2d"),VD=[];let sp=0,sStage=-1,sR=null,vCur=0;
+["hf_20261004_061734_3d6af6b6-1ee8-4442-b44a-4f69af6ea940.mp4","hf_20261005_110845_f9760043-8f39-4bd2-aa82-b5308dabeaf1.mp4","hf_20261006_040739_123e07f4-c834-498a-82c2-14d3e433fc0b.mp4"].forEach((u,i)=>{const v=document.createElement("video");v.crossOrigin="anonymous";v.muted=true;v.playsInline=true;v.setAttribute("playsinline","");v.preload="auto";
+  v.onloadeddata=()=>{v.ok=1;drawStory(true)};v.onseeked=()=>{if(i===vCur){blitStory(v);if(v.want!=null&&Math.abs(v.want-v.currentTime)>.03){const t=v.want;v.want=null;v.currentTime=t}}};v.src="https://d8j0ntlcm91z4.cloudfront.net/user_320TDOQlq5eoC0Ix9LCuwou9CG5/"+u;VD.push(v)});
+function primeVid(){VD.forEach(v=>{if(!v.primed){v.primed=1;try{const p=v.play();p&&p.then(()=>v.pause()).catch(()=>{})}catch(e){}}})}
+addEventListener("touchstart",primeVid,{passive:true,once:true});addEventListener("pointerdown",primeVid,{passive:true,once:true});
+function blitStory(v){if(!v.videoWidth)return;const d=Math.min(2,devicePixelRatio||1),w=innerWidth,h=VH(),a=v.videoWidth/v.videoHeight,dw=Math.max(w,h*a),dh=dw/a,x0=(w-dw)/2,y0=(h-dh)/2;
+  sc2.setTransform(d,0,0,d,0,0);sc2.globalAlpha=1;try{sc2.drawImage(v,x0,y0,dw,dh)}catch(e){}sR=[x0,y0,dw,dh,VD.indexOf(v)]}
 let spT=0,sRaf=0;
 function drawStory(force){
   if(phase!=="one"||step>=0)return;
@@ -417,14 +421,11 @@ function tickStory(){sRaf=0;if(phase!=="one"||step>=0)return;
   paintStory();if(sp!==spT)sRaf=requestAnimationFrame(tickStory)}
 function paintStory(force){
   const d=Math.min(2,devicePixelRatio||1),w=innerWidth,h=VH();if(ST.width!==Math.round(w*d)||ST.height!==Math.round(h*d)){ST.width=Math.round(w*d);ST.height=Math.round(h*d)}
-  const fk=sp<.12?sp/.12*3:sp<.21?3+(sp-.12)/.09*2:sp<.32?5+(sp-.21)/.11*5.7:10.7+(sp-.32)/.68*(NF-11.7),k=Math.min(NF-1,Math.floor(fk)),fr=fk-k;
-  {sLast=k;let m=k;while(m>0&&!FR[m].ok)m--;const im=FR[m];
-    if(im&&im.ok){const a=im.width/im.height,u=Math.min(1,sp/.5),e=1-u*u*u*(u*(u*6-15)+10),cw0=Math.max(w,h*a),dw=cw0*Math.pow(Math.max(1,Math.min(3*h*a,w/.36)/cw0),e),dh=dw/a;
-      const fy=.5-.31*e,ty=.5-.04*e,x0=Math.max(w-dw,Math.min(0,w/2-dw*(.5-.025*e))),y0=Math.max(h-dh,Math.min(0,h*ty-dh*fy));
-      sc2.setTransform(d,0,0,d,0,0);sc2.globalAlpha=1;sc2.drawImage(im,x0,y0,dw,dh);
-      const n2=FR[Math.min(NF-1,k+1)];if(m===k&&fr>.02&&n2.ok){sc2.globalAlpha=fr;sc2.drawImage(n2,x0,y0,dw,dh);sc2.globalAlpha=1}
-      if(sp<.09&&HI.ok){sc2.globalAlpha=1-sp/.09;sc2.drawImage(HI,x0,y0,dw,dh);sc2.globalAlpha=1}
-      sR=[x0,y0,dw,dh,fr>.5&&n2.ok?Math.min(NF-1,k+1):m]}}
+  {const i=sp<.3?0:sp<.63?1:2,u=i===0?sp/.3:i===1?(sp-.3)/.33:(sp-.63)/.37,v=VD[i];vCur=i;
+    if(v.ok){const tt=Math.max(0,Math.min(1,u))*((v.duration||5)-.08);
+      if(Math.abs(v.currentTime-tt)>.03){if(v.seeking)v.want=tt;else{v.want=null;v.currentTime=tt}}
+      blitStory(v)}
+    else{let m=i;while(m>0&&!VD[m].ok)m--;if(VD[m].ok&&!sR)blitStory(VD[m])}}
   const st=sp<.3?0:sp<.72?1:2;
   if(st!==sStage||force){sStage=st;const t=T[L],h=q2=>q2[0]+(q2[1]?`<br><em>${q2[1]}</em>`:"");
     $("sline").innerHTML=h(t.st[0]);$("sline2").innerHTML=h(t.st[2]);$("top1").textContent=t.top[0];$("top2").textContent=t.top[1];
@@ -435,7 +436,7 @@ function paintStory(force){
 addEventListener("scroll",()=>drawStory(),{passive:true});
 function takeover(){
   cyOff=.22;if(!sR)return;
-  try{const im=FR[sR[4]],c=document.createElement("canvas"),cw=c.width=120,ch=c.height=Math.round(120*im.height/im.width),g=c.getContext("2d");
+  try{const im=VD[sR[4]],c=document.createElement("canvas"),cw=c.width=120,ch=c.height=Math.round(120*im.videoHeight/im.videoWidth),g=c.getContext("2d");
     g.drawImage(im,0,0,cw,ch);const d=g.getImageData(0,0,cw,ch).data,pts=[];let sx0=0,sy0=0;
     for(let y=0;y<ch;y++)for(let x=0;x<cw;x++){const o4=(y*cw+x)*4,rr=d[o4],bb=d[o4+2],v=(rr-bb>14?150:0)+(rr>238?100:0);if(v>120){const n=v>200?3:1;for(let k=0;k<n;k++)pts.push(x,y);sx0+=x*n;sy0+=y*n}}
     const np=pts.length/2;if(np<50)return;const mxp=sx0/np,myp=sy0/np;
@@ -445,7 +446,7 @@ function takeover(){
     pcol="#ffd7a3";setTimeout(()=>pcol="#ffe9cf",1300);setTimeout(()=>pcol="#fff",2400);stiff=.0025;damp=.93;setTimeout(()=>{if(phase==="one")stiff=.008},900);setTimeout(()=>{if(phase==="one"){stiff=.022;damp=.84}},2000);$("iv").classList.add("late");setTimeout(()=>$("iv").classList.remove("late"),60);
   }catch(e){}
 }
-function heroState(on){ST.classList.toggle("off",!on);if(on){toDust();sLast=-1;drawStory(true)}else toShape("1")}
+function heroState(on){ST.classList.toggle("off",!on);if(on){toDust();drawStory(true)}else toShape("1")}
 /* ---------- grouping ---------- */
 function applyMode(){
   const t=T[L];
@@ -676,8 +677,9 @@ var vhEl=null;function VH(){if(!vhEl){vhEl=document.createElement("div");vhEl.st
 var G=null,T0={en:T.en,ko:T.ko};
 Object.assign(T0.en,{pl:["Searching for real data on this decision…","Reading what came back…","Building the questions and the odds…","Almost there…"],plh:"What we found",plgo:"Start the questions",plsrc:"sourced",plasm:"AI assumption",plfail:"We could not build this one. Try wording it as a personal decision, or run the built-in example.",plre:"Rewrite it",plex:"Run the startup example",plstart:"This is the decision our built-in model was made for, so it uses the business survival statistics directly."});
 Object.assign(T0.ko,{pl:["이 고민에 대한 실제 자료를 찾고 있습니다…","찾은 자료를 읽고 있습니다…","질문과 확률을 만들고 있습니다…","거의 다 됐습니다…"],plh:"찾은 근거",plgo:"질문 시작하기",plsrc:"출처 있음",plasm:"AI 가정",plfail:"이 고민으로는 만들지 못했습니다. 개인의 결정으로 다시 적어보거나, 준비된 예시로 진행해 보세요.",plre:"다시 쓰기",plex:"창업 예시로 진행",plstart:"이 고민은 준비된 창업 모델에 딱 맞아서, 사업 생존 통계를 그대로 씁니다."});
-function setG(spec){G=spec||null;T.en=T0.en;T.ko=T0.ko;if(G){T[L]=Object.assign({},T0[L],gT(L,G));A={limit:1,hor:2};G.questions.forEach((Q,i)=>A["g"+i]=Math.min(Q.o.length-1,1))}$("lang").classList.toggle("hide",!!G)}
-function gT(L,S){const V=S.v,ko=L==="ko",t=T0[L],Qk=S.questions.map((Q,i)=>["g"+i,Q.q,Q.o]),alt={},adv={};
+function setG(spec){G=spec||null;T.en=T0.en;T.ko=T0.ko;if(G){T[L]=Object.assign({},T0[L],gT(L,G));A=G.mode==="commit"?{limit:3,hor:3}:{limit:1,hor:2};G.questions.forEach((Q,i)=>A["g"+i]=Math.min(Q.o.length-1,1))}$("lang").classList.toggle("hide",!!G)}
+function gT(L,S){const o=gT0(L,S);return S.mode==="commit"?Object.assign(o,gTC(L,S,o)):o}
+function gT0(L,S){const V=S.v,ko=L==="ko",t=T0[L],Qk=S.questions.map((Q,i)=>["g"+i,Q.q,Q.o]),alt={},adv={};
   S.questions.forEach((Q,i)=>{let j=0;Q.risk.forEach((x,k)=>{if(x<Q.risk[j])j=k});alt["g"+i]=ko?`"${Q.q}"의 답이 "${Q.o[j]}"일 때`:`If your answer to "${Q.q}" were "${Q.o[j]}"`;adv["g"+i]=ko?`"${Q.q}"에 "${Q.o[j]}"라고 답할 수 있게 먼저 준비해`:`get to where you can answer "${Q.o[j]}" to "${Q.q}"`});
   const tag=S.hzSrc>=0?(ko?"출처 기반":"sourced"):(ko?"AI 가정":"AI assumption");
   const src=S.facts.map(f=>[f.s>=0&&S.sources[f.s]?S.sources[f.s].title:(ko?"AI 가정":"AI assumption"),f.t,f.s>=0&&S.sources[f.s]?S.sources[f.s].url:""]).concat((S.refs||[]).map(r=>[r.title,ko?"검색으로 찾아 읽은 자료입니다. 위 수치에 직접 인용하지는 않았습니다.":"Found and read during research. Not quoted for the numbers above.",r.url]));
@@ -716,11 +718,33 @@ function gT(L,S){const V=S.v,ko=L==="ko",t=T0[L],Qk=S.questions.map((Q,i)=>["g"+
     f2:(p,y)=>`In <b>${p}%</b> of lives ${V.metric} rose above "${V.base}", typically by <b>year ${y}</b>.`,f2z:`Almost no life saw ${V.metric} rise above "${V.base}".`,
     f3:a=>`Among those who stopped, the typical shortfall was <b>${a}</b>.`,f4:(a,b)=>`"${V.base}": ${V.metric} of about <b>${a}</b> in year 10. The median of these lives is <b>${b}</b>.`,
     db:(y,n)=>[[y.n,y.cls===0?"I would do it again. I got what I wanted and I chose my own days.":`I would do it again. I stopped and fell ${y.lossA} behind, but I learned what I can do.`],[n.n,`I would not. I stopped in year ${n.closed}, ${n.lossA} behind.`],[y.n,"We started from the same place. Small differences and luck separated us. Tell them that."]]}}
+function gTC(L,S,o){const V=S.v,ko=L==="ko",tag=S.hzSrc>=0?(ko?"출처 기반":"sourced"):(ko?"AI 가정":"AI assumption"),Q=o.Q.filter(q=>q[0]!=="limit"&&q[0]!=="hor"),a1o=o.a1;
+  const a1=(l,A)=>{const b=Object.assign({},l,{pv:0,why:""});let x=a1o(b,A);if(l.pv)x+=ko?" 힘든 시기가 있었고, 그걸 지나왔어.":" There was a hard stretch, and I came through it.";return x};
+  return ko?{Q,a1,k:["만족","반반","후회"],c1:"이 선택에 만족함",c2:"좋은 해와 힘든 해가 반반",c3:`${V.base} 더 나았을 것`,
+    srcnote:`출처가 있는 수치와 AI가 가정한 수치를 위에 구분해 두었습니다. 연차별로 힘든 시기를 겪을 확률은 ${tag}입니다. 질문의 답이 확률을 바꾸는 정도는 모두 AI의 가정입니다. 이 길은 되돌릴 수 없어서 도중에 그만두는 경우는 계산하지 않았습니다.`,
+    liveL:V.doing,f_run:x=>`이 길은 되돌릴 수 없어서, 남은 인생 모두 1년 뒤에도 ${V.doing}입니다.`,
+    warn:x=>`남은 인생의 <b>${x}%</b>가 후회로 끝납니다.`,cfl:(a,s0,s1,l0,l1)=>`${a}: 만족 <b>${s0}% → ${s1}%</b>, 후회 ${l0}% → ${l1}%.`,tgt:(a,b,g,z)=>`${a} 기준: ${V.metric} <b>${b}</b> 이상. 여기에 도달한 인생은 <b>${g}%</b>가 만족으로 끝났고, 못 미친 인생은 ${z}%였습니다.`,nosucc:y=>"남은 인생 중 만족으로 끝나는 건 없습니다.",
+    ck1o:["순조로움","힘든 시기를 지나는 중"],cite:p=>`이 연차에 ${p}%가 힘든 시기를 겪습니다 (${tag}).`,citeK:p=>`이 연차에 ${p}%가 힘든 시기를 겪습니다 (${tag}).`,
+    ev:Object.assign({},o.ev,{pivot:`힘든 시기. ${V.metric} 수준이 크게 떨어짐.`}),
+    a0:l=>l.cls===0?`응. 10년 차인 지금 ${V.metric} 수준은 ${V.base} 대비 ${l.amt}이야. 다시 골라도 이 길이야.`:l.cls===1?`좋았던 해도 힘들었던 해도 있었어. 지금은 ${V.base} 대비 ${l.amt}이고, 후회라고 부를 정도는 아니야.`:`솔직히 힘들었어. 지금 ${V.metric} 수준은 ${V.base} 대비 ${l.amt}이야. 시작하기 전에 준비가 더 필요했어.`,
+    f1:(n,t,y)=>`${t}개 중 <b>${n}개</b>는 10년 뒤 ${V.metric} 수준이 "${V.base}" 기준보다 뚜렷이 낮았습니다. 가장 힘든 시기는 평균 <b>${y}년 차</b>.`,f1z:`10년 뒤 "${V.base}" 기준보다 뚜렷이 낮아진 인생은 없었습니다.`,
+    rg:Object.assign({},o.rg,{luck:"없음. 운이었다",late:"준비 없이 시작한 것"}),
+    db:(y,n)=>[[y.n,"나는 다시 해. 힘든 해도 있었지만 이 선택이 내 삶을 채웠어."],[n.n,`나는 다시 생각해볼 거야. ${n.hard}년 차가 가장 힘들었고, 그때 준비가 안 돼 있었어.`],[y.n,"우리는 같은 자리에서 출발했어. 우리를 가른 건 작은 차이와 운이었고, 그 사실을 꼭 전해줘."]]}
+  :{Q,a1,k:["Glad","Mixed","Regret"],c1:"glad you chose this",c2:"good years and hard years in equal measure",c3:`would have been better off: "${V.base}"`,
+    srcnote:`Sourced numbers and AI assumptions are marked above. The yearly chance of a hard stretch is ${tag}. How much each answer shifts the odds is an AI assumption. This path cannot be undone, so stopping partway is not modelled.`,
+    liveL:V.doing,f_run:x=>`This path cannot be undone, so every remaining life is still ${V.doing} a year from now.`,
+    warn:x=>`<b>${x}%</b> of the remaining lives end in regret.`,cfl:(a,s0,s1,l0,l1)=>`${a}: glad <b>${s0}% → ${s1}%</b>, regret ${l0}% → ${l1}%.`,tgt:(a,b,g,z)=>`Mark for ${a}: ${V.metric} of <b>${b}</b> or more. Lives that reached it ended glad <b>${g}%</b> of the time, against ${z}% for those that did not.`,nosucc:y=>"None of the remaining lives end glad.",
+    ck1o:["Going well","In a hard stretch"],cite:p=>`${p}% go through a hard stretch in this year (${tag}).`,citeK:p=>`${p}% go through a hard stretch in this year (${tag}).`,
+    ev:Object.assign({},o.ev,{pivot:`A hard stretch. ${V.metric} dropped sharply.`}),
+    a0:l=>l.cls===0?`Yes. In year 10 my ${V.metric} is ${l.amt} of "${V.base}". I would choose this again.`:l.cls===1?`There were good years and hard ones. I am at ${l.amt} of "${V.base}" now, and I would not call it regret.`:`Honestly, it was hard. My ${V.metric} is ${l.amt} of "${V.base}". I needed to be more ready before I started.`,
+    f1:(n,t,y)=>`In <b>${n}</b> of ${t} lives ${V.metric} ended clearly below "${V.base}". The hardest stretch came on average in year <b>${y}</b>.`,f1z:`No life ended clearly below "${V.base}".`,
+    rg:Object.assign({},o.rg,{luck:"Nothing. It was luck",late:"Starting unprepared"}),
+    db:(y,n)=>[[y.n,"I would do it again. There were hard years, but this choice filled my life."],[n.n,`I would think again. Year ${n.hard} was the hardest and I was not ready for it.`],[y.n,"We started from the same place. Small differences and luck separated us. Tell them that."]]}}
 function simG(a,from){
-  const S=G,r=rng(20261030),g=()=>{let u=0;for(let i=0;i<6;i++)u+=r();return u-3};
+  const S=G,CM=S.mode==="commit",r=rng(20261030),g=()=>{let u=0;for(let i=0;i<6;i++)u+=r();return u-3};
   let pF=1;S.questions.forEach((Q,i)=>{pF*=Q.risk[a["g"+i]]??1});pF=Math.max(.4,Math.min(2.2,pF));
   const H=S.hazard.map(h=>Math.min(.6,h*pF));if(a===A)haz=H;
-  const inc0=S.start,I=0,plan=y=>Math.min(cap0,inc0*Math.pow(1+Math.max(0,S.growth),y-1)),cap0=S.cap,limit=[.5,1,2,99][a.limit],hor=[2,3,5,99][a.hor],g0=S.growth,vol=S.vol,cap=S.cap;
+  const inc0=S.start,I=0,plan=y=>Math.min(cap0,inc0*Math.pow(1+Math.max(0,S.growth),y-1)),cap0=S.cap,limit=CM?99:[.5,1,2,99][a.limit],hor=CM?99:[2,3,5,99][a.hor],g0=S.growth,vol=S.vol,cap=S.cap;
   const out=[];base=[];for(let y=0;y<=10;y++)base.push(idx(stay(y),.5));
   const y0=from?Math.max(1,Math.min(9,Math.round(from.t))):0,fp=from?[[0,inc0]].concat(from.pts):null;
   const pathV=y=>{let k=0;while(k<fp.length-1&&fp[k+1][0]<y)k++;if(k>=fp.length-1)return fp[fp.length-1][1];const a=fp[k],b=fp[k+1];return a[1]+(b[1]-a[1])*Math.max(0,Math.min(1,(y-a[0])/Math.max(.01,b[0]-a[0])))};
@@ -731,8 +755,8 @@ function simG(a,from){
     for(let y=y0+1;y<=10;y++){
       if(biz){
         const p=H[y-1];let why="";
-        if(r()<p){if(l.willPiv&&!l.pv&&r()<.55){l.pv=y;inc*=.85;l.ev.push([y,"pivot"])}else why="fail"}
-        else if(y>1){const gr=g0+g()*vol;inc=Math.min(cap,Math.max(.1,inc*(1+gr)));l.ev.push([y,gr>.05?"grow":"flat",inc])}
+        if(r()<p){if(CM){if(!l.pv)l.pv=y;inc=Math.max(.1,inc*.78);l.ev.push([y,"pivot",0,Math.round(p*1000)/10])}else if(l.willPiv&&!l.pv&&r()<.55){l.pv=y;inc*=.85;l.ev.push([y,"pivot"])}else why="fail"}
+        else if(y>1){const gr=g0+g()*vol;inc=Math.min(cap,Math.max(.1,inc*(1+gr)+(CM?(plan(y)-inc)*.16:0)));l.ev.push([y,gr>.05?"grow":"flat",inc])}
         else{inc=Math.max(.1,inc*(1+g()*.15));l.ev.push([1,"quit",inc])}
         if(!why){const b=stay(y),pl=plan(y);l.loss+=Math.max(0,pl-inc);l.loss=Math.max(0,l.loss-Math.max(0,inc-pl)*.5);
           if(l.loss>limit)why="line";else if(y>=hor&&inc<Math.min(b,pl)*.7)why="hor";
@@ -742,7 +766,7 @@ function simG(a,from){
       }else{inc*=1.03+g()*.015;sat=Math.min(.58,sat+.025);if(y===10)l.ev.push([y,"job",inc])}
       l.p.push(idx(inc,sat)+g()*.01);l.iy.push(inc);
     }
-    l.inc=inc;l.biz=biz;l.cls=l.line?2:(biz&&inc>=stay(10)*.95)?0:1;
+    l.inc=inc;l.biz=biz;l.cls=CM?(inc>=1.05?0:inc<.9?2:1):l.line?2:(biz&&inc>=stay(10)*.95)?0:1;if(CM&&l.cls===2)l.line=l.hard;
     l.again=r()<[.93,.5,.14][l.cls];
     const f1=r(),f2=r();l.ct=l.closed?Math.max(from?from.t+.05:0,l.closed-1+f1):99;l.pt=l.pv?l.pv-1+f2:99;
     l.reg=l.cls===0?(l.beat&&l.beat<=3?"none":"sooner"):l.why==="line"?"late":"luck";
@@ -753,11 +777,13 @@ function simG(a,from){
 async function plan(){const t=T[L],o=$("opts");let k=0;$("ivnote").textContent="";$("qq").textContent=t.pl[0];o.innerHTML=`<div class="lead">${esc(qText)}</div>`;
   const tm=setInterval(()=>{k=Math.min(t.pl.length-1,k+1);if(step===0)$("qq").textContent=t.pl[k]},4500);
   const fail=m=>{$("qq").textContent=m||t.plfail;o.innerHTML="";const a=document.createElement("button");a.className="pill solid go";a.textContent=t.plre;a.onclick=()=>ask();o.appendChild(a);const b=document.createElement("button");b.className="pill";b.style.marginTop="4px";b.textContent=t.plex;b.onclick=()=>{setG(null);step=1;ask()};o.appendChild(b)};
-  let r;try{r=await aiCall({kind:"plan",q:qText})}catch(e){clearInterval(tm);if(step===0)fail();return}
+  let r;const soft=x=>!x||(!x.startup&&!x.ok&&x.why!=="crisis"&&!/^type=invalid/.test(x.why||""));try{r=await aiCall({kind:"plan",q:qText})}catch(e){r=null}
+  if(soft(r)&&step===0){try{r=await aiCall({kind:"plan",q:qText,retry:1})}catch(e){r=null}}
+  if(!r){clearInterval(tm);if(step===0)fail();return}
   clearInterval(tm);if(step!==0)return;
   const go=()=>{const b=document.createElement("button");b.className="pill solid go";b.style.marginTop="14px";b.textContent=T[L].plgo;b.onclick=()=>{step=1;burst(7);ask()};o.appendChild(b)};
   if(r.startup){setG(null);$("qq").textContent=t.plh;o.innerHTML=`<div class="find">${t.plstart}</div>`;go();return}
-  if(!r.ok||!r.spec){fail(r.why==="unsupported"?(L==="ko"?"이 고민은 해보다가 돌아설 수 있는 길이 아니어서, 지금 방식으로는 다루지 않습니다. 일, 공부, 이주처럼 도중에 방향을 바꿀 수 있는 고민을 적어주세요.":"This one cannot be stopped or undone once chosen, so this method does not cover it. Try a decision you could turn back from, such as work, study or a move."):null);return}
+  if(!r.ok||!r.spec){fail(r.why==="crisis"?(L==="ko"?"적어주신 내용은 시뮬레이션보다 사람의 도움이 먼저 필요해 보입니다. 지금 위험하거나 혼자 감당하기 어렵다면 119 또는 자살예방 상담전화 109에 연락해 주세요. 가까운 사람에게 지금 상황을 알리는 것도 도움이 됩니다.":"What you wrote sounds like it needs a person before a simulation. If you are in danger or this feels like too much to carry alone, please contact your local emergency number or a crisis line now, and let someone close to you know."):null);return}
   setG(r.spec);paint_src();$("qq").textContent=T[L].plh;{const n=T[L].Q.length;$("pn").textContent="01 / "+String(n+1).padStart(2,"0");$("pb").style.width=(100/(n+1))+"%"}
   o.innerHTML=G.facts.map(f=>`<div class="find">${esc(f.t)} <em class="aitag" style="display:inline;margin-left:6px">${f.s>=0&&G.sources[f.s]?T[L].plsrc+": "+esc(G.sources[f.s].title):T[L].plasm}</em></div>`).join("");go()}
 function paint_src(){const t=T[L];$("src").innerHTML=t.src.map(s=>`<div class="find"><b>${esc(s[0])}</b><br>${esc(s[1])} ${s[2]?`<a href="${esc(s[2])}" target="_blank" rel="noopener">↗</a>`:""}</div>`).join("")+`<div class="find">${t.srcnote}</div>`;document.querySelectorAll("[data-t]").forEach(e=>{const v=t[e.dataset.t];if(typeof v==="string")e.innerHTML=v})}
