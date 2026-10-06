@@ -93,7 +93,7 @@ Include every life exactly once in answers.` },
       const msgs = [
         { role: "system", content: `You design a 10-year simulation of one personal decision for "A Thousand Lives". The person either takes a new path or stays as they are. Write all text in ${lang}${ko ? " (questions and labels in polite 존댓말)" : ""}.
 Return ONLY JSON with this shape:
-{"type":"startup"|"other"|"invalid"|"unsupported",
+{"type":"startup"|"other"|"commit"|"invalid"|"crisis",
  "v":{"act":"short noun for the new path","doing":"short phrase meaning still on the new path","start":"short noun for the starting event","fallback":"short phrase for what happens after stopping","base":"short phrase meaning: if I had not done it","metric":"what is measured, such as income or life satisfaction"},
  "questions":[{"q":"question about this person's situation that changes the odds","o":["option","option","option"],"risk":[1.3,1.0,0.75]}],
  "hazard":[ten numbers],"hzSrc":source index or -1,
@@ -102,25 +102,29 @@ Return ONLY JSON with this shape:
 Rules:
 - type "startup" only when the person would found and run their own business or go freelance. Changing employers, including joining a startup as an employee, is type "other". Then return {"type":"startup"} and nothing else.
 - type "invalid" when the text is not a personal life decision. Then return {"type":"invalid"}.
-- type "unsupported" when the path cannot be stopped or undone once taken (for example having a child or a medical procedure), or when the text is about self-harm or a medical or legal emergency. Then return {"type":"unsupported"}.
+- type "crisis" only when the text is about self-harm, suicide, violence, abuse or a medical emergency happening now. Then return {"type":"crisis"} and nothing else.
+- type "commit" when the path cannot be stopped or undone once taken: having a child, marrying, divorcing or breaking up, adopting, a permanent body change, cutting off a relationship. Fill in every field as for "other", with these meanings: v.metric must be life satisfaction; v.doing is a short phrase meaning living with this choice; v.fallback is an empty string; hazard is the chance in each year of a hard stretch that seriously tests the choice (not of stopping); risk is the multiplier on that chance; the index is life satisfaction compared with not having done it; fallback is 1 and cost is 0. Questions must be about readiness and circumstances, never about whether the person can back out.
+- Any other personal decision, large or small (career, study, moving, money, relationships, health habits, hobbies, buying something big), is type "other" or "commit". Never refuse a personal decision because it is unusual or small.
 - Moving to the countryside to farm is type "other", not "startup".
 - Exactly 7 questions, 3 options each, using exactly the keys "q", "o" and "risk" as in the shape above. Questions end politely (in Korean: ~인가요? or ~있나요?). risk is the multiplier on the yearly chance of stopping for each option (0.6 to 1.6; higher is riskier).
 - hazard: chance in each of years 1 to 10 that the person stops or the new path ends that year (0.01 to 0.4). Use the sources when they give rates.
 - The metric is an index where 1.0 means "the same as if I had not done it". start: index in year 1. growth: average yearly growth of the index while continuing. vol: yearly volatility. cap: maximum index. fallback: index after stopping. cost: upfront cost measured in years of the baseline.
 - facts: 3 to 5 sentences. Every fact must bear directly on how this decision turns out; drop numbers about unrelated topics even if a source contains them. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text, at most 80 characters, and must not contain double quote characters. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
-- Korean example of v for studying abroad: {"act":"유학","doing":"유학 중","start":"출국","fallback":"귀국 후 취업","base":"가지 않았다면","metric":"소득"}` },
+- If the search results are empty or unrelated, still return the full JSON using your own estimates, with every fact marked s:-1.\n- Korean example of v for studying abroad: {"act":"유학","doing":"유학 중","start":"출국","fallback":"귀국 후 취업","base":"가지 않았다면","metric":"소득"}` },
         { role: "user", content: `Decision: ${q}\n\nSearch results (index, title, text):\n${sources.map((x, i) => `[${i}] ${x.title}\n${x.content}`).join("\n\n") || "(no search results)"}` },
       ];
       let j = null, out, perr = "";
-      for (let a = 0; a < 2 && !j; a++) {
+      const good = x => x && (["startup", "crisis", "invalid"].includes(x.type) || (x.v && Array.isArray(x.questions || x.question_list) && (x.questions || x.question_list).length >= 4));
+      if (j === null && b.retry) msgs[1].content += "\n\nReturn the complete JSON object with all fields. Do not leave out questions or v.";
+      for (let a = 0; a < 2 && !good(j); a++) {
       out = await complete(msgs, { json: true, max: 5000, temp: a ? 0.6 : 0.3 });
       let txt = out.text;
       if (ko && /[\u3040-\u30ff\u00c0-\u024f\u0400-\u04ff]/.test(txt)) txt = txt.replace(/[\u3040-\u30ff\u00c0-\u024f\u0400-\u04ff]+/g, "");
-      const m = txt.match(/\{[\s\S]*\}/); try { j = JSON.parse(m ? m[0] : txt); } catch (e) { perr = clip(e.message, 80) + " | " + clip(txt, 60); }
+      const m = txt.match(/\{[\s\S]*\}/); try { const jj = JSON.parse(m ? m[0] : txt); if (jj && jj.question_list && !jj.questions) jj.questions = jj.question_list; if (good(jj) || !j) j = jj; } catch (e) { perr = clip(e.message, 80) + " | " + clip(txt, 60); }
       }
       if (!j) return res.status(200).json({ ok: false, why: "json: " + perr });
       if (j.type === "startup") return res.status(200).json({ startup: true });
-      if (j.type === "unsupported") return res.status(200).json({ ok: false, why: "unsupported" });
+      if (j.type === "crisis") return res.status(200).json({ ok: false, why: "crisis" });
       const num = (x, lo, hi, d) => { x = Number(x); return Number.isFinite(x) ? Math.max(lo, Math.min(hi, x)) : d; };
       const si = x => { x = Number(x); return Number.isInteger(x) && x >= 0 && x < sources.length ? x : -1; };
       const qs = (Array.isArray(j.questions) ? j.questions : []).map(x => x && ({ q: x.q || x.question || x.text, o: x.o || x.options || x.choices || x.answers, risk: x.risk || x.risks || x.multipliers })).filter(x => x && x.q && Array.isArray(x.o) && x.o.length >= 2).slice(0, 7)
@@ -128,14 +132,16 @@ Rules:
       let hz = j.hazard || j.hazards || j.yearly_hazard; if (!Array.isArray(hz) || hz.length < 5) { hz = [0.12, 0.1, 0.08, 0.07, 0.06, 0.05, 0.05, 0.04, 0.04, 0.03]; j.hzSrc = -1; }
       if (j.type === "invalid" || qs.length < 4 || hz.length < 5 || !j.v) return res.status(200).json({ ok: false, why: `type=${j.type} qs=${qs.length} hz=${hz.length} v=${!!j.v} rawq=${Array.isArray(j.questions) ? j.questions.length : typeof j.questions}` });
       const v = {}; for (const k of ["act", "doing", "start", "fallback", "base", "metric"]) v[k] = clip(j.v[k] || "", 30);
-      if (!v.act || !v.doing || !v.base || !v.metric) return res.status(200).json({ ok: false, why: "v " + JSON.stringify(v) });
+      const commit = j.type === "commit";
+      if (!v.doing) v.doing = v.act; if (!v.base) v.base = ko ? "하지 않았다면" : "if I had not"; if (!v.metric) v.metric = commit ? (ko ? "삶의 만족도" : "life satisfaction") : (ko ? "소득" : "income");
+      if (!v.act) return res.status(200).json({ ok: false, why: "v " + JSON.stringify(v) });
       const norm = x => String(x || "").replace(/[\s"'“”‘’.,·]/g, "").toLowerCase();
       const backed = (s, quote) => { const n = norm(quote); return s >= 0 && n.length >= 6 && norm(sources[s].content).includes(n); };
       const facts = (Array.isArray(j.facts) ? j.facts : []).filter(f => f && f.t).slice(0, 5).map(f => { const s = si(f.s); return { t: clip(f.t, 220), s: backed(s, f.quote) ? s : -1 }; });
       if (!facts.some(f => f.s === si(j.hzSrc))) j.hzSrc = -1;
       const used = [...new Set(facts.map(f => f.s).concat([si(j.hzSrc)]).filter(x => x >= 0))], remap = {}; used.forEach((x, k) => remap[x] = k);
-      const spec = { v, questions: qs, hazard: Array.from({ length: 10 }, (_, k) => num(hz[Math.min(k, hz.length - 1)], 0.005, 0.5, 0.08)), hzSrc: si(j.hzSrc) >= 0 ? remap[si(j.hzSrc)] : -1,
-        start: num(j.start, 0.2, 1.5, 0.8), growth: num(j.growth, -0.05, 0.4, 0.08), vol: num(j.vol, 0.05, 0.4, 0.15), cap: num(j.cap, 1, 6, 3), fallback: num(j.fallback, 0.3, 1.2, 0.9), cost: num(j.cost, 0, 3, 0.3),
+      const spec = { mode: commit ? "commit" : "path", v, questions: qs, hazard: Array.from({ length: 10 }, (_, k) => num(hz[Math.min(k, hz.length - 1)], 0.005, 0.5, 0.08)), hzSrc: si(j.hzSrc) >= 0 ? remap[si(j.hzSrc)] : -1,
+        start: num(j.start, 0.2, 1.5, 0.8), growth: num(j.growth, -0.05, 0.4, 0.08), vol: num(j.vol, 0.05, 0.4, 0.15), cap: num(j.cap, 1, 6, 3), fallback: commit ? 1 : num(j.fallback, 0.3, 1.2, 0.9), cost: commit ? 0 : num(j.cost, 0, 3, 0.3),
         facts: facts.map(f => ({ t: f.t, s: f.s >= 0 ? remap[f.s] : -1 })), sources: used.map(x => ({ title: sources[x].title, url: sources[x].url })), refs: sources.filter((_, i) => !used.includes(i)).slice(0, 4).map(x => ({ title: x.title, url: x.url })) };
       return res.status(200).json({ ok: true, spec, searched: sources.length, model: out.model });
     }
