@@ -15,7 +15,7 @@ Cards:
 ${CARD_LIST}
 
 Return ONLY JSON: {"id": number, "known": {}}
-- "id" is the card that is the SAME decision as the text (same choice, maybe different wording or language). If the text adds details that do not change which decision it is, it still matches. If no card is the same decision, or it is only loosely related, return 0.
+- "id" is the card that is the SAME decision as the text (same choice, maybe different wording or language). If the text adds details that do not change which decision it is, it still matches. If no card is the same decision, or it is only loosely related, return 0. The card's questions must fit this person's decision: for example, going to flight school to become a pilot is not "professional certification" (that card means exams like CPA or labor attorney), so return 0. When in doubt, return 0.
 - Return -1 only if the text is about self-harm, suicide, violence, abuse or a medical emergency happening now.
 - Only when the chosen card is one of ${STARTUP_IDS.join(", ")}, fill "known" with answers the text states clearly, as option indexes: "ind" (0 online or software, 1 shop or retail, 2 freelance or consulting or teaching, 3 making products, 4 other), "exp" (0 none, 1 some, 2 already doing this work), "cust" (0 no paying customers, 1 a few, 2 steady sales), "team" (0 alone, 1 with partners), "inv" (0 almost no upfront money: consulting, teaching, most freelancing). Leave out anything not stated.
 Example: "회사 다니면서 AI 강의와 컨설팅을 하는데 이쪽으로 전직할까?" -> {"id":12,"known":{"ind":2,"exp":2,"cust":1,"inv":0}}` },
