@@ -4,7 +4,45 @@ const BASE = (process.env.NEBIUS_BASE_URL || "https://api.tokenfactory.nebius.co
 const MODEL = process.env.NEBIUS_MODEL || "nvidia/nemotron-3-super-120b-a12b";
 const FALLBACK = process.env.NEBIUS_MODEL_FALLBACK || "nvidia/nvidia-nemotron-3-nano-30b-a3b";
 
+import CARDS from "./_cards.js";
 export const config = { maxDuration: 60 };
+const STARTUP_IDS = CARDS.filter(c => c.type === "startup").map(c => c.id);
+const CARD_LIST = CARDS.map(c => `${c.id}. ${c.title.ko} / ${c.title.en}`).join("\n");
+async function pickCard(q) {
+  const out = await complete([
+    { role: "system", content: `You match a person's decision to a library of 100 researched decision cards for "A Thousand Lives".
+Cards:
+${CARD_LIST}
+
+Return ONLY JSON: {"id": number, "known": {}}
+- "id" is the card that is the SAME decision as the text (same choice, maybe different wording or language). If the text adds details that do not change which decision it is, it still matches. If no card is the same decision, or it is only loosely related, return 0.
+- Return -1 only if the text is about self-harm, suicide, violence, abuse or a medical emergency happening now.
+- Only when the chosen card is one of ${STARTUP_IDS.join(", ")}, fill "known" with answers the text states clearly, as option indexes: "ind" (0 online or software, 1 shop or retail, 2 freelance or consulting or teaching, 3 making products, 4 other), "exp" (0 none, 1 some, 2 already doing this work), "cust" (0 no paying customers, 1 a few, 2 steady sales), "team" (0 alone, 1 with partners), "inv" (0 almost no upfront money: consulting, teaching, most freelancing). Leave out anything not stated.
+Example: "회사 다니면서 AI 강의와 컨설팅을 하는데 이쪽으로 전직할까?" -> {"id":12,"known":{"ind":2,"exp":2,"cust":1,"inv":0}}` },
+    { role: "user", content: q },
+  ], { json: true, max: 1500, temp: 0 });
+  const m = out.text.match(/\{[\s\S]*\}/); const j = JSON.parse(m ? m[0] : out.text);
+  const id = Number(j.id);
+  if (id === -1) return { crisis: true };
+  const card = CARDS.find(c => c.id === id);
+  if (!card) return null;
+  const kn = {}, K = { ind: 4, exp: 2, cust: 2, team: 1, inv: 3 }, jk = j.known && typeof j.known === "object" ? j.known : {};
+  for (const k in K) { const x = Number(jk[k]); if (Number.isInteger(x) && x >= 0 && x <= K[k]) kn[k] = x; }
+  return { card, known: kn, model: out.model };
+}
+function fromCard(c, ko, known) {
+  const L = ko ? "ko" : "en";
+  const sources = c.sources.map(s => ({ title: clip(s.title, 120), url: s.url }));
+  const pt = p => ({ t: p.stat[L], place: p.place ? p.place[L] : "", agency: p.agency || "", year: p.year || "", s: p.s });
+  const card = { id: c.id, title: c.title[L], sources, data: { korea: (c.korea || []).map(pt), usa: (c.usa || []).map(pt), global: (c.global || []).map(pt) } };
+  const facts = c.facts.map(f => ({ t: f[L], s: f.s }));
+  const questions = c.questions.map(x => ({ q: x[L], o: x.o[L], risk: x.risk }));
+  if (c.type === "startup") return { startup: true, act: c.v[L].act, known, questions, card: Object.assign(card, { facts }) };
+  const spec = { mode: c.type === "commit" ? "commit" : "path", v: c.v[L], questions, hazard: c.hazard, hzSrc: c.hzSrc,
+    start: c.start, growth: c.growth, vol: c.vol, cap: c.cap, fallback: c.type === "commit" ? 1 : c.fallback, cost: c.type === "commit" ? 0 : c.cost,
+    facts, sources, refs: [], card };
+  return { ok: true, spec, searched: 0, card: c.id };
+}
 const hits = new Map(); // tiny per-instance rate limit
 function limited(ip) {
   const now = Date.now(), w = (hits.get(ip) || []).filter(t => now - t < 60000);
@@ -85,6 +123,11 @@ Include every life exactly once in answers.` },
     }
     if (b.kind === "plan") {
       const ko = b.lang === "ko", lang = ko ? "Korean" : "English";
+      if (!b.nocard) {
+        let pc = null; try { pc = await pickCard(q); } catch (e) { pc = null; }
+        if (pc && pc.crisis) return res.status(200).json({ ok: false, why: "crisis" });
+        if (pc && pc.card) return res.status(200).json(Object.assign(fromCard(pc.card, ko, pc.known), { model: pc.model }));
+      }
       const [s1, s2] = await Promise.all([
         tavily(q + (ko ? " 통계 조사 보고서 비율" : " statistics report survey rate")),
         tavily(q + (ko ? " 장기 결과 연구 소득 만족도" : " long-term outcomes study income satisfaction")),
