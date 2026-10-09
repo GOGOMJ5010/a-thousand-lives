@@ -287,7 +287,7 @@ function simS(a,from){
   let burn=[.45,.7,.92][a.spend]+[0,.06,.12][a.dep]+[0,.06,.15][a.debt];if(a.other)burn*=.6;const live=burn;burn*=.78;
   const H=hazards(a);if(a===A)haz=H;
   const g0=[.27,.17,.13,.22,.2][a.ind],vol=[.34,.2,.14,.26,.26][a.ind],share=a.team?.75:1,cap=[6,2.2,1.8,4,3][a.ind]*share;
-  const pF=CAL*[1.25,1,.8][a.exp]*[1,.75,.55][a.cust]*(a.team?.9:1);
+  const pF=sxm(a)*CAL*[1.25,1,.8][a.exp]*[1,.75,.55][a.cust]*(a.team?.9:1);
   const inc0=([.45,.6,.85][a.cust]+(a.ind===2?.1:0))*share,savings=[.25,.5,1,1.5][a.run]*live,I=[0,.5,1,2][a.inv],limit=[.5,1,2,99][a.limit],hor=[2,3,5,99][a.hor];
   const rejoin=[.95,.85,.7][a.back]*(a.age===3?.88:a.age===2?.95:1)*(a.car===2?1.05:a.car===0?.92:1),gap=[0,.4,.9][a.back];
   const out=[];base=[];for(let y=0;y<=10;y++)base.push(idx(stay(y),.5));
@@ -674,10 +674,12 @@ async function aiCrowd(q){const t=T[L],P=pool(),S=[];
 var vhEl=null;function VH(){if(!vhEl){vhEl=document.createElement("div");vhEl.style.cssText="position:fixed;top:0;left:0;width:0;height:100vh;height:100lvh;visibility:hidden;pointer-events:none";document.body.appendChild(vhEl)}return Math.max(innerHeight,vhEl.offsetHeight)}
 
 /* ---------- any decision: plan from live research (Tavily) + Nemotron ---------- */
-var G=null,T0={en:T.en,ko:T.ko};
+var G=null,SX=null,T0={en:T.en,ko:T.ko};
+function setS(r){SX=null;const kn=r&&r.known||{},qs=r&&Array.isArray(r.questions)?r.questions:[];A=Object.assign({},DEF);for(const k in kn)A[k]=kn[k];if(!qs.length&&!Object.keys(kn).length)return;SX={qs,act:r.act||""};qs.forEach((Q,i)=>A["x"+i]=1);for(const l of ["en","ko"]){const Q0=T0[l].Q.filter(Q=>!(Q[0] in kn)),cut=Q0.findIndex(Q=>Q[0]==="limit");const add=l===L?qs.map((Q,i)=>["x"+i,Q.q,Q.o]):[];T[l]=Object.assign({},T0[l],{Q:Q0.slice(0,cut).concat(add,Q0.slice(cut))})}}
+const sxm=a=>SX?SX.qs.reduce((m,Q,i)=>m*(Q.risk[a["x"+i]]||1),1):1;
 Object.assign(T0.en,{pl:["Searching for real data on this decision…","Reading what came back…","Building the questions and the odds…","Almost there…"],plh:"What we found",plgo:"Start the questions",plsrc:"sourced",plasm:"AI assumption",plfail:"We could not build this one. Try wording it as a personal decision, or run the built-in example.",plre:"Rewrite it",plex:"Run the startup example",plstart:"This is the decision our built-in model was made for, so it uses the business survival statistics directly."});
 Object.assign(T0.ko,{pl:["이 고민에 대한 실제 자료를 찾고 있습니다…","찾은 자료를 읽고 있습니다…","질문과 확률을 만들고 있습니다…","거의 다 됐습니다…"],plh:"찾은 근거",plgo:"질문 시작하기",plsrc:"출처 있음",plasm:"AI 가정",plfail:"이 고민으로는 만들지 못했습니다. 개인의 결정으로 다시 적어보거나, 준비된 예시로 진행해 보세요.",plre:"다시 쓰기",plex:"창업 예시로 진행",plstart:"이 고민은 준비된 창업 모델에 딱 맞아서, 사업 생존 통계를 그대로 씁니다."});
-function setG(spec){G=spec||null;T.en=T0.en;T.ko=T0.ko;if(G){T[L]=Object.assign({},T0[L],gT(L,G));A=G.mode==="commit"?{limit:3,hor:3}:{limit:1,hor:2};G.questions.forEach((Q,i)=>A["g"+i]=Math.min(Q.o.length-1,1))}$("lang").classList.toggle("hide",!!G)}
+function setG(spec){G=spec||null;SX=null;T.en=T0.en;T.ko=T0.ko;if(G){T[L]=Object.assign({},T0[L],gT(L,G));A=G.mode==="commit"?{limit:3,hor:3}:{limit:1,hor:2};G.questions.forEach((Q,i)=>A["g"+i]=Math.min(Q.o.length-1,1))}$("lang").classList.toggle("hide",!!G)}
 function gT(L,S){const o=gT0(L,S);return S.mode==="commit"?Object.assign(o,gTC(L,S,o)):o}
 function gT0(L,S){const V=S.v,ko=L==="ko",t=T0[L],Qk=S.questions.map((Q,i)=>["g"+i,Q.q,Q.o]),alt={},adv={};
   S.questions.forEach((Q,i)=>{let j=0;Q.risk.forEach((x,k)=>{if(x<Q.risk[j])j=k});alt["g"+i]=ko?`"${Q.q}"의 답이 "${Q.o[j]}"일 때`:`If your answer to "${Q.q}" were "${Q.o[j]}"`;adv["g"+i]=ko?`"${Q.q}"에 "${Q.o[j]}"라고 답할 수 있게 먼저 준비해`:`get to where you can answer "${Q.o[j]}" to "${Q.q}"`});
@@ -782,7 +784,7 @@ async function plan(){const t=T[L],o=$("opts");let k=0;$("ivnote").textContent="
   if(!r){clearInterval(tm);if(step===0)fail();return}
   clearInterval(tm);if(step!==0)return;
   const go=()=>{const b=document.createElement("button");b.className="pill solid go";b.style.marginTop="14px";b.textContent=T[L].plgo;b.onclick=()=>{step=1;burst(7);ask()};o.appendChild(b)};
-  if(r.startup){setG(null);$("qq").textContent=t.plh;o.innerHTML=`<div class="find">${t.plstart}</div>`;go();return}
+  if(r.startup){setG(null);setS(r);$("qq").textContent=t.plh;o.innerHTML=`<div class="find">${t.plstart}</div>`;go();return}
   if(!r.ok||!r.spec){fail(r.why==="crisis"?(L==="ko"?"적어주신 내용은 시뮬레이션보다 사람의 도움이 먼저 필요해 보입니다. 지금 위험하거나 혼자 감당하기 어렵다면 119 또는 자살예방 상담전화 109에 연락해 주세요. 가까운 사람에게 지금 상황을 알리는 것도 도움이 됩니다.":"What you wrote sounds like it needs a person before a simulation. If you are in danger or this feels like too much to carry alone, please contact your local emergency number or a crisis line now, and let someone close to you know."):null);return}
   setG(r.spec);paint_src();$("qq").textContent=T[L].plh;{const n=T[L].Q.length;$("pn").textContent="01 / "+String(n+1).padStart(2,"0");$("pb").style.width=(100/(n+1))+"%"}
   o.innerHTML=G.facts.map(f=>`<div class="find">${esc(f.t)} <em class="aitag" style="display:inline;margin-left:6px">${f.s>=0&&G.sources[f.s]?T[L].plsrc+": "+esc(G.sources[f.s].title):T[L].plasm}</em></div>`).join("");go()}
