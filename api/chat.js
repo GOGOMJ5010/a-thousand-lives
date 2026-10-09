@@ -8,7 +8,7 @@ import CARDS from "./_cards.js";
 export const config = { maxDuration: 60 };
 const STARTUP_IDS = CARDS.filter(c => c.type === "startup").map(c => c.id);
 const CARD_LIST = CARDS.map(c => `${c.id}. ${c.title.ko} / ${c.title.en}`).join("\n");
-async function pickCard(q) {
+async function pickCard(q, me) {
   const out = await complete([
     { role: "system", content: `You match a person's decision to a library of 100 researched decision cards for "A Thousand Lives".
 Cards:
@@ -19,7 +19,7 @@ Return ONLY JSON: {"id": number, "known": {}}
 - Return -1 only if the text is about self-harm, suicide, violence, abuse or a medical emergency happening now.
 - Only when the chosen card is one of ${STARTUP_IDS.join(", ")}, fill "known" with answers the text states clearly, as option indexes: "ind" (0 online or software, 1 shop or retail, 2 freelance or consulting or teaching, 3 making products, 4 other), "exp" (0 none, 1 some, 2 already doing this work), "cust" (0 no paying customers, 1 a few, 2 steady sales), "team" (0 alone, 1 with partners), "inv" (0 almost no upfront money: consulting, teaching, most freelancing). Leave out anything not stated.
 Example: "회사 다니면서 AI 강의와 컨설팅을 하는데 이쪽으로 전직할까?" -> {"id":12,"known":{"ind":2,"exp":2,"cust":1,"inv":0}}` },
-    { role: "user", content: q },
+    { role: "user", content: q + (me ? "\n\nAbout the person:\n" + me : "") },
   ], { json: true, max: 1500, temp: 0 });
   const m = out.text.match(/\{[\s\S]*\}/); const j = JSON.parse(m ? m[0] : out.text);
   const id = Number(j.id);
@@ -42,6 +42,18 @@ function fromCard(c, ko, known) {
     start: c.start, growth: c.growth, vol: c.vol, cap: c.cap, fallback: c.type === "commit" ? 1 : c.fallback, cost: c.type === "commit" ? 0 : c.cost,
     facts, sources, refs: [], card };
   return { ok: true, spec, searched: 0, card: c.id };
+}
+async function preAnswer(qs, me) {
+  if (!me || !Array.isArray(qs) || !qs.length) return {};
+  try {
+    const out = await complete([
+      { role: "system", content: `You read what a person told us about themselves and answer multiple-choice questions only where their text clearly states or directly implies the answer. Return ONLY JSON: {"answers":{"<question index>": <option index>}}. Leave out every question the text does not clearly answer. Never guess.` },
+      { role: "user", content: `About the person:\n${me}\n\nQuestions:\n${qs.map((x, i) => `${i}. ${x.q} ${x.o.map((o, k) => `[${k}] ${o}`).join(" ")}`).join("\n")}` },
+    ], { json: true, max: 1200, temp: 0 });
+    const m = out.text.match(/\{[\s\S]*\}/); const j = JSON.parse(m ? m[0] : out.text), a = j.answers || {}, r = {};
+    for (const k in a) { const i = Number(k), v = Number(a[k]); if (Number.isInteger(i) && qs[i] && Number.isInteger(v) && v >= 0 && v < qs[i].o.length) r[i] = v; }
+    return r;
+  } catch (e) { return {}; }
 }
 const hits = new Map(); // tiny per-instance rate limit
 function limited(ip) {
@@ -123,10 +135,11 @@ Include every life exactly once in answers.` },
     }
     if (b.kind === "plan") {
       const ko = b.lang === "ko", lang = ko ? "Korean" : "English";
+      const me = clip(b.me, 1500).trim();
       if (!b.nocard) {
-        let pc = null; try { pc = await pickCard(q); } catch (e) { pc = null; }
+        let pc = null; try { pc = await pickCard(q, me); } catch (e) { pc = null; }
         if (pc && pc.crisis) return res.status(200).json({ ok: false, why: "crisis" });
-        if (pc && pc.card) return res.status(200).json(Object.assign(fromCard(pc.card, ko, pc.known), { model: pc.model }));
+        if (pc && pc.card) { const r0 = fromCard(pc.card, ko, pc.known); r0.pre = await preAnswer(r0.questions || r0.spec.questions, me); return res.status(200).json(Object.assign(r0, { model: pc.model })); }
       }
       const [s1, s2] = await Promise.all([
         tavily(q + (ko ? " 통계 조사 보고서 비율" : " statistics report survey rate")),
@@ -156,7 +169,7 @@ Rules:
 - The metric is an index where 1.0 means "the same as if I had not done it". start: index in year 1. growth: average yearly growth of the index while continuing. vol: yearly volatility. cap: maximum index. fallback: index after stopping. cost: upfront cost measured in years of the baseline.
 - facts: 3 to 5 sentences. Every fact must bear directly on how this decision turns out; drop numbers about unrelated topics even if a source contains them. Use a source only if it is about the same decision seen from this person's side (for example, for someone deciding to study abroad, ignore sources about foreign students coming to their country). For a sourced fact, "quote" must be copied character for character from that source text, at most 80 characters, and must not contain double quote characters. If a number is your own estimate, set "s" to -1, leave "quote" empty and say in the sentence that it is an assumption. Never attribute an invented number to a source.\n- The questions must be about the person making this decision, from their side.\n- Write every string in ${lang} only. Do not mix in words or letters from any other language.
 - If the search results are empty or unrelated, still return the full JSON using your own estimates, with every fact marked s:-1.\n- Korean example of v for studying abroad: {"act":"유학","doing":"유학 중","start":"출국","fallback":"귀국 후 취업","base":"가지 않았다면","metric":"소득"}` },
-        { role: "user", content: `Decision: ${q}\n\nSearch results (index, title, text):\n${sources.map((x, i) => `[${i}] ${x.title}\n${x.content}`).join("\n\n") || "(no search results)"}` },
+        { role: "user", content: `${me ? "About this person (fit the questions to this person; never ask what this already answers):\n" + me + "\n\n" : ""}Decision: ${q}\n\nSearch results (index, title, text):\n${sources.map((x, i) => `[${i}] ${x.title}\n${x.content}`).join("\n\n") || "(no search results)"}` },
       ];
       let j = null, out, perr = "";
       const good = x => x && (["startup", "crisis", "invalid"].includes(x.type) || (x.v && Array.isArray(x.questions || x.question_list) && (x.questions || x.question_list).length >= 4));
@@ -168,7 +181,7 @@ Rules:
       const m = txt.match(/\{[\s\S]*\}/); try { const jj = JSON.parse(m ? m[0] : txt); if (jj && jj.question_list && !jj.questions) jj.questions = jj.question_list; if (good(jj) || !j) j = jj; } catch (e) { perr = clip(e.message, 80) + " | " + clip(txt, 60); }
       }
       if (!j) return res.status(200).json({ ok: false, why: "json: " + perr });
-      if (j.type === "startup") { const kn = {}, K = { ind: 4, exp: 2, cust: 2, team: 1, inv: 3 }; const jk = j.known && typeof j.known === "object" ? j.known : {}; for (const k in K) { const x = Number(jk[k]); if (Number.isInteger(x) && x >= 0 && x <= K[k]) kn[k] = x; } const sq = (Array.isArray(j.questions) ? j.questions : []).map(x => x && ({ q: clip(x.q || x.question || "", 120), o: (x.o || x.options || []).slice(0, 3).map(y => clip(String(y), 60)), risk: (x.risk || []).slice(0, 3).map(y => (Number.isFinite(+y) ? Math.max(0.6, Math.min(1.6, +y)) : 1)) })).filter(x => x && x.q && x.o.length === 3 && x.risk.length === 3).slice(0, 4); return res.status(200).json({ startup: true, act: clip(j.act || "", 30), known: kn, questions: sq }); }
+      if (j.type === "startup") { const kn = {}, K = { ind: 4, exp: 2, cust: 2, team: 1, inv: 3 }; const jk = j.known && typeof j.known === "object" ? j.known : {}; for (const k in K) { const x = Number(jk[k]); if (Number.isInteger(x) && x >= 0 && x <= K[k]) kn[k] = x; } const sq = (Array.isArray(j.questions) ? j.questions : []).map(x => x && ({ q: clip(x.q || x.question || "", 120), o: (x.o || x.options || []).slice(0, 3).map(y => clip(String(y), 60)), risk: (x.risk || []).slice(0, 3).map(y => (Number.isFinite(+y) ? Math.max(0.6, Math.min(1.6, +y)) : 1)) })).filter(x => x && x.q && x.o.length === 3 && x.risk.length === 3).slice(0, 4); return res.status(200).json({ startup: true, act: clip(j.act || "", 30), known: kn, questions: sq, pre: await preAnswer(sq, me) }); }
       if (j.type === "crisis") return res.status(200).json({ ok: false, why: "crisis" });
       const num = (x, lo, hi, d) => { x = Number(x); return Number.isFinite(x) ? Math.max(lo, Math.min(hi, x)) : d; };
       const si = x => { x = Number(x); return Number.isInteger(x) && x >= 0 && x < sources.length ? x : -1; };
@@ -188,7 +201,7 @@ Rules:
       const spec = { mode: commit ? "commit" : "path", v, questions: qs, hazard: Array.from({ length: 10 }, (_, k) => num(hz[Math.min(k, hz.length - 1)], 0.005, 0.5, 0.08)), hzSrc: si(j.hzSrc) >= 0 ? remap[si(j.hzSrc)] : -1,
         start: num(j.start, 0.2, 1.5, 0.8), growth: num(j.growth, -0.05, 0.4, 0.08), vol: num(j.vol, 0.05, 0.4, 0.15), cap: num(j.cap, 1, 6, 3), fallback: commit ? 1 : num(j.fallback, 0.3, 1.2, 0.9), cost: commit ? 0 : num(j.cost, 0, 3, 0.3),
         facts: facts.map(f => ({ t: f.t, s: f.s >= 0 ? remap[f.s] : -1 })), sources: used.map(x => ({ title: sources[x].title, url: sources[x].url })), refs: sources.filter((_, i) => !used.includes(i)).slice(0, 4).map(x => ({ title: x.title, url: x.url })) };
-      return res.status(200).json({ ok: true, spec, searched: sources.length, model: out.model });
+      return res.status(200).json({ ok: true, spec, pre: await preAnswer(qs, me), searched: sources.length, model: out.model });
     }
     return res.status(400).json({ error: "kind" });
   } catch (e) {
